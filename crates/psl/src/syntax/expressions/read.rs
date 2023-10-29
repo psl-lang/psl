@@ -5,19 +5,13 @@ use winnow::{
 
 use crate::{
     ast::{ReadExpression, TokenKind},
-    syntax::{
-        fragments::r#type::parse_type,
-        tokens::{is_token, parse_token},
-    },
+    syntax::fragments::r#type::parse_type,
 };
 
 pub fn parse_read(s: &mut Located<&str>) -> PResult<ReadExpression> {
     (
-        parse_token.verify(is_token(TokenKind::KeywordRead)),
-        opt(preceded(
-            parse_token.verify(is_token(TokenKind::WhitespaceHorizontal)),
-            parse_type,
-        )),
+        TokenKind::KeywordRead,
+        opt(preceded(TokenKind::WhitespaceHorizontal, parse_type)),
     )
         .map(|(_, ty)| ReadExpression { ty })
         .parse_next(s)

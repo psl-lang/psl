@@ -6,22 +6,18 @@ use winnow::{
 
 use crate::{
     ast::{TokenKind, VariableDeclaration},
-    syntax::{
-        expressions::parse_expression,
-        fragments::r#type::parse_type,
-        tokens::{is_token, parse_token},
-    },
+    syntax::{ expressions::parse_expression, fragments::r#type::parse_type},
 };
 
 pub fn parse_variable_declaration(s: &mut Located<&str>) -> PResult<VariableDeclaration> {
     (
         parse_type,
-        parse_token.verify(is_token(TokenKind::WhitespaceHorizontal)),
-        parse_token.verify(is_token(TokenKind::IdentifierIdentifier)),
+        TokenKind::WhitespaceHorizontal,
+        TokenKind::IdentifierIdentifier,
         opt((
-            parse_token.verify(is_token(TokenKind::WhitespaceHorizontal)),
-            parse_token.verify(is_token(TokenKind::PonctuationEqualsSign)),
-            parse_token.verify(is_token(TokenKind::WhitespaceHorizontal)),
+            TokenKind::WhitespaceHorizontal,
+            TokenKind::PonctuationEqualsSign,
+            TokenKind::WhitespaceHorizontal,
             cut_err(parse_expression).context(StrContext::Expected(StrContextValue::Description(
                 "expression",
             ))),

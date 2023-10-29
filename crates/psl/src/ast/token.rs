@@ -10,7 +10,10 @@ pub enum TokenKind {
     KeywordRead,
     KeywordWrite,
 
+    PunctuationAsterisk,
     PunctuationPlusSign,
+    PunctuationHyphenMinus,
+    PunctuationSolidus,
     PonctuationEqualsSign,
 
     Eof,

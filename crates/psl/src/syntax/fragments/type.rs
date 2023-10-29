@@ -2,12 +2,9 @@ use winnow::Parser;
 use winnow::{Located, PResult};
 
 use crate::ast::{TokenKind, Type};
-use crate::syntax::parse_token;
-use crate::syntax::tokens::is_token;
 
 pub fn parse_type(s: &mut Located<&str>) -> PResult<Type> {
-    parse_token
-        .verify(is_token(TokenKind::IdentifierIdentifier))
+    TokenKind::IdentifierIdentifier
         .map(Type::Simple)
         .parse_next(s)
 }

@@ -22,9 +22,15 @@ fn main() -> ExitCode {
     {
         Ok(ast) => ast,
         Err(e) => {
+            let next_token = parse_token
+                .with_span()
+                .parse_next(&mut Located::new(&e.input()[e.offset()..]))
+                .map(|(_, span)| &e.input()[e.offset()..][span])
+                .unwrap_or("");
+
             let mut error_message = e.inner().to_string();
             if error_message.is_empty() {
-                error_message.push_str("unknown");
+                error_message = format!("unexpected token `{next_token}`");
             }
             eprintln!("compilation error: {}", error_message);
 
@@ -35,15 +41,10 @@ fn main() -> ExitCode {
             let range = e.input().find_line_range(e.offset());
             eprintln!("  | {}", &e.input()[range.clone()]);
 
-            let next_token_len = parse_token
-                .with_span()
-                .parse_next(&mut Located::new(&e.input()[e.offset()..]))
-                .map(|(_, span)| span.len())
-                .unwrap_or(1);
             eprintln!(
                 "  | {}{}",
                 " ".repeat(UnicodeWidthStr::width(&e.input()[range.start..e.offset()])),
-                "^".repeat(next_token_len),
+                "^".repeat(next_token.len()),
             );
 
             if let Some(range) = e.input().find_next_line_range(e.offset()) {
