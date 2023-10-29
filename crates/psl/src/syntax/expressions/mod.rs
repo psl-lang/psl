@@ -2,7 +2,8 @@ use winnow::{Located, PResult, Parser};
 
 use crate::ast::Expression;
 
-use self::operator::parse_operator;
+pub use name::parse_name;
+use operator::parse_operator;
 
 mod name;
 mod operator;

@@ -23,14 +23,13 @@ fn main() -> ExitCode {
         Ok(ast) => ast,
         Err(e) => {
             let next_token = parse_token
-                .with_span()
                 .parse_next(&mut Located::new(&e.input()[e.offset()..]))
-                .map(|(_, span)| &e.input()[e.offset()..][span])
-                .unwrap_or("");
+                .map(|token| token.content)
+                .unwrap_or("".to_string());
 
             let mut error_message = e.inner().to_string();
             if error_message.is_empty() {
-                error_message = format!("unexpected token `{next_token}`");
+                error_message = format!("unexpected token {next_token:?}");
             }
             eprintln!("compilation error: {}", error_message);
 
