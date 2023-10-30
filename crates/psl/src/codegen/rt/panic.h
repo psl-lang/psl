@@ -1,5 +1,4 @@
 #pragma once
-#include <unistd.h>
 
 #include "typedef.h"
 #include "write.h"
@@ -7,7 +6,7 @@
 i32 __sys_panic(c8 *msg, size_t len)
 {
     __sys_write(msg, len);
-    _exit(1);
+    _Exit(1);
     return 0;
 }
 

@@ -36,6 +36,7 @@ impl CodegenNode for Program {
             output.push_str(&ctx.visit(item));
         }
 
+        output.push_str("_Exit(0);\n");
         output.push_str("}\n");
 
         output
