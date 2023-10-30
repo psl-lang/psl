@@ -20,12 +20,12 @@ void __write_i32(i32 i)
         0,
     };
     usize offset = 20;
-    while (i > 0)
+    do
     {
         offset -= 1;
         buf[offset] = '0' + (i % 10);
         i /= 10;
-    }
+    } while (i > 0);
     if (is_negative)
     {
         offset -= 1;
