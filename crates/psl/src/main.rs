@@ -1,8 +1,6 @@
-use std::{env::args, fs, process::ExitCode};
-
-use line_span::LineSpanExt;
+use ariadne::{Label, Report, Source};
 use psl::syntax::{parse_program, parse_token};
-use unicode_width::UnicodeWidthStr;
+use std::{env::args, fs, process::ExitCode};
 use winnow::{Located, Parser};
 
 fn main() -> ExitCode {
@@ -25,30 +23,25 @@ fn main() -> ExitCode {
             let next_token = parse_token
                 .parse_next(&mut Located::new(&e.input()[e.offset()..]))
                 .map(|token| token.content)
-                .unwrap_or("".to_string());
+                .unwrap();
 
             let mut error_message = e.inner().to_string();
             if error_message.is_empty() {
                 error_message = format!("unexpected token {next_token:?}");
             }
-            eprintln!("compilation error: {}", error_message);
 
-            if let Some(range) = e.input().find_prev_line_range(e.offset()) {
-                eprintln!("  | {}", &e.input()[range]);
-            }
+            let raw_input: &str = &e.input();
 
-            let range = e.input().find_line_range(e.offset());
-            eprintln!("  | {}", &e.input()[range.clone()]);
-
-            eprintln!(
-                "  | {}{}",
-                " ".repeat(UnicodeWidthStr::width(&e.input()[range.start..e.offset()])),
-                "^".repeat(next_token.len()),
-            );
-
-            if let Some(range) = e.input().find_next_line_range(e.offset()) {
-                eprintln!("  | {}", &e.input()[range]);
-            }
+            Report::build(ariadne::ReportKind::Error, &file, e.offset())
+                .with_code(1)
+                .with_message(error_message)
+                .with_label(Label::new((
+                    &file,
+                    e.offset()..e.offset() + next_token.len(),
+                )))
+                .finish()
+                .print((&file, Source::from(raw_input)))
+                .unwrap();
 
             return ExitCode::FAILURE;
         }

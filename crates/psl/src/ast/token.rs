@@ -16,6 +16,7 @@ pub enum TokenKind {
     PunctuationSolidus,
     PonctuationEqualsSign,
 
+    Error,
     Eof,
 }
 
