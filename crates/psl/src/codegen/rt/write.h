@@ -4,13 +4,9 @@
 
 #include "typedef.h"
 
-void __sys_write(u8 *buf, usize len)
+void __sys_write(c8 *buf, usize len)
 {
     write(1, buf, len);
-}
-
-void __write_u8(u8 i)
-{
 }
 
 void __write_i32(i32 i)
@@ -20,12 +16,12 @@ void __write_i32(i32 i)
     {
         i = -i;
     }
-    u8 buf[20];
+    c8 buf[20];
     usize offset = 20;
     while (i > 0)
     {
         offset -= 1;
-        buf[offset] = i % 10;
+        buf[offset] = '0' + (i % 10);
         i /= 10;
     }
     if (is_negative)

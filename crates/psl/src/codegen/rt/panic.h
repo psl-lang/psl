@@ -4,7 +4,7 @@
 #include "typedef.h"
 #include "write.h"
 
-i32 __sys_panic(u8 *msg, size_t len)
+i32 __sys_panic(c8 *msg, size_t len)
 {
     __sys_write(msg, len);
     _exit(1);
