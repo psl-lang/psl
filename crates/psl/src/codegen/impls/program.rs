@@ -1,4 +1,7 @@
-use crate::{ast::Program, codegen::visitor::CodegenNode};
+use crate::{
+    ast::Program,
+    codegen::{context::CodegenContext, visitor::CodegenNode},
+};
 
 macro_rules! include_rt {
     ($output:expr, $file:literal) => {
@@ -11,18 +14,24 @@ macro_rules! include_rt {
 }
 
 impl CodegenNode for Program {
-    fn produce_code(self, ctx: &mut crate::codegen::context::CodegenContext) -> String {
+    fn produce_code(self, ctx: &mut CodegenContext) -> String {
         let mut output = String::new();
         output.push_str("#pragma once\n");
-        output.push_str("#inclue <unistd.h>\n");
-        output.push_str("#inclue <stddef.h>\n");
-        output.push_str("#inclue <stdbool.h>\n");
-        output.push_str("#inclue <stdint.h>\n");
+        output.push_str("#include <unistd.h>\n");
+        output.push_str("#include <stddef.h>\n");
+        output.push_str("#include <stdbool.h>\n");
+        output.push_str("#include <stdint.h>\n");
         output.push_str("\n");
         include_rt!(output, "typedef.h");
         include_rt!(output, "write.h");
+        include_rt!(output, "panic.h");
 
-        output.push_str("int __libc_start_main() {\n");
+        output.push_str("main; __libc_start_main() {\n");
+
+        for item in self.items {
+            output.push_str(&ctx.visit(item));
+        }
+
         output.push_str("}\n");
 
         output
