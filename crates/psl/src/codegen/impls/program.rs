@@ -30,7 +30,7 @@ impl CodegenNode for Program {
         include_rt!(output, "panic.h");
         include_rt!(output, "read.h");
 
-        output.push_str("int main; int __libc_start_main() {\n");
+        output.push_str("int main() {}; int __libc_start_main() {\n");
 
         for item in self.items {
             output.push_str(&ctx.visit(item));
