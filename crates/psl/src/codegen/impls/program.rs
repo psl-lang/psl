@@ -16,7 +16,6 @@ macro_rules! include_rt {
 impl CodegenNode for Program {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
         let mut output = String::new();
-        output.push_str("#pragma once\n");
         output.push_str("#include <unistd.h>\n");
         output.push_str("#include <stddef.h>\n");
         output.push_str("#include <stdbool.h>\n");
@@ -26,7 +25,7 @@ impl CodegenNode for Program {
         include_rt!(output, "write.h");
         include_rt!(output, "panic.h");
 
-        output.push_str("main; __libc_start_main() {\n");
+        output.push_str("int main; int __libc_start_main() {\n");
 
         for item in self.items {
             output.push_str(&ctx.visit(item));

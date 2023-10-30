@@ -62,7 +62,7 @@ fn main() -> ExitCode {
 
     fs::write(&output_path, output).unwrap();
 
-    println!("C code generated, run gcc for compilation.");
+    eprintln!("C code generated, run gcc for compile.");
 
     let mut executable_path = PathBuf::from_str(&path).unwrap();
     let mut executable_filename = executable_path.file_stem().unwrap().to_owned();
@@ -77,6 +77,9 @@ fn main() -> ExitCode {
         .unwrap()
         .wait_with_output()
         .unwrap();
+
+    eprintln!("Run the program");
+    eprintln!("-------------------------------------------");
 
     Command::new(&executable_path)
         .spawn()
