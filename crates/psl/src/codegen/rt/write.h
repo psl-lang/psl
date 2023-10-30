@@ -6,7 +6,7 @@
 
 void __sys_write(c8 *buf, usize len)
 {
-    write(1, buf, len);
+    write(STDOUT_FILENO, buf, len);
 }
 
 void __write_i32(i32 i)
@@ -16,7 +16,9 @@ void __write_i32(i32 i)
     {
         i = -i;
     }
-    c8 buf[20];
+    c8 buf[20] = {
+        0,
+    };
     usize offset = 20;
     while (i > 0)
     {
@@ -29,5 +31,5 @@ void __write_i32(i32 i)
         offset -= 1;
         buf[offset] = '-';
     }
-    __sys_write((buf + offset), 20 - offset);
+    __sys_write(buf + offset, 20 - offset);
 }

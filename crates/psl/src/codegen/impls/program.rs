@@ -26,9 +26,9 @@ impl CodegenNode for Program {
         output.push_str("#include <stdint.h>\n");
         output.push_str("\n");
         include_rt!(output, "typedef.h");
-        include_rt!(output, "read.h");
         include_rt!(output, "write.h");
         include_rt!(output, "panic.h");
+        include_rt!(output, "read.h");
 
         output.push_str("int main; int __libc_start_main() {\n");
 

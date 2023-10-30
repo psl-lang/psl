@@ -1,6 +1,6 @@
 use super::Token;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Type {
     Simple(Token),
 }

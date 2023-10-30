@@ -1,7 +1,4 @@
-use winnow::{
-    combinator::{opt, preceded},
-    Located, PResult, Parser,
-};
+use winnow::{combinator::preceded, Located, PResult, Parser};
 
 use crate::{
     ast::{ReadExpression, TokenKind},
