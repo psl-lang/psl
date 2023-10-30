@@ -1,5 +1,8 @@
 use ariadne::{Label, Report, Source};
-use psl::syntax::{parse_program, parse_token};
+use psl::{
+    generate_codes,
+    syntax::{parse_program, parse_token},
+};
 use std::{env::args, fs, process::ExitCode};
 use winnow::{Located, Parser};
 
@@ -14,10 +17,7 @@ fn main() -> ExitCode {
         return ExitCode::FAILURE
     };
 
-    let ast = match parse_program
-        .with_span()
-        .parse(Located::new(content.as_ref()))
-    {
+    let ast = match parse_program.parse(Located::new(content.as_ref())) {
         Ok(ast) => ast,
         Err(e) => {
             let next_token = parse_token
@@ -47,7 +47,9 @@ fn main() -> ExitCode {
         }
     };
 
-    println!("{ast:#?}");
+    let output = generate_codes(ast);
+
+    println!("{output}");
 
     ExitCode::SUCCESS
 }
