@@ -16,12 +16,17 @@ macro_rules! include_rt {
 impl CodegenNode for Program {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
         let mut output = String::new();
+        output.push_str(
+            &include_str!("../rt/header.h")
+                .replace("{{CARGO_PKG_VERSION}}", env!("CARGO_PKG_VERSION")),
+        );
         output.push_str("#include <unistd.h>\n");
         output.push_str("#include <stddef.h>\n");
         output.push_str("#include <stdbool.h>\n");
         output.push_str("#include <stdint.h>\n");
         output.push_str("\n");
         include_rt!(output, "typedef.h");
+        include_rt!(output, "read.h");
         include_rt!(output, "write.h");
         include_rt!(output, "panic.h");
 

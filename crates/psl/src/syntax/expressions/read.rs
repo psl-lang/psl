@@ -11,8 +11,8 @@ use crate::{
 pub fn parse_read(s: &mut Located<&str>) -> PResult<ReadExpression> {
     (
         TokenKind::KeywordRead,
-        opt(preceded(TokenKind::WhitespaceHorizontal, parse_type)),
+        preceded(TokenKind::WhitespaceHorizontal, parse_type),
     )
-        .map(|(_, ty)| ReadExpression { ty })
+        .map(|(_, ty)| ReadExpression::Type(ty))
         .parse_next(s)
 }

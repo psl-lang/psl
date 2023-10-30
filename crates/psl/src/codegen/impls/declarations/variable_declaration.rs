@@ -13,9 +13,9 @@ impl CodegenNode for VariableDeclaration {
         output.push_str(" ");
         output.push_str(&self.name.content);
 
-        if let Some(_value) = self.value {
+        if let Some(node) = self.value {
             output.push_str(" = ");
-            output.push_str(r#"__sys_todo()"#);
+            output.push_str(&ctx.visit(node))
         }
 
         output.push_str(";\n");

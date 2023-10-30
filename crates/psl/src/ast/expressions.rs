@@ -8,8 +8,8 @@ pub enum Expression {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct ReadExpression {
-    pub ty: Option<Type>,
+pub enum ReadExpression {
+    Type(Type),
 }
 
 #[derive(Debug, PartialEq)]
