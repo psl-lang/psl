@@ -17,7 +17,13 @@ pub enum TokenKind {
     PunctuationPlusSign,
     PunctuationHyphenMinus,
     PunctuationSolidus,
+    PunctuationPercent,
+    PunctuationAmpersand,
+    PunctuationPipe,
     PonctuationEqualsSign,
+    PunctuationLessSign,
+    PunctuationGreaterSign,
+    PunctuationExclamationMark,
 
     Error,
     Eof,

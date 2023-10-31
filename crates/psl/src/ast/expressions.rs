@@ -38,4 +38,13 @@ pub enum BinaryOperator {
     Subtract,
     Multiply,
     Divide,
+    Modulus,
+    Equal,
+    NotEqual,
+    Less,
+    Greater,
+    LessEqual,
+    GreaterEqual,
+    LogiacalAnd,
+    LogicalOr,
 }
