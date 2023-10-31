@@ -22,7 +22,7 @@ impl<'a> Diagnostic<'a> {
 
         let mut message = value.inner().to_string();
         if message.is_empty() {
-            message = format!("unexpected token {next_token:?}");
+            message = format!("unexpected token {:?}", next_token.content);
         }
 
         Self {
