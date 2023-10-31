@@ -6,7 +6,10 @@ use winnow::{
 
 use crate::{
     ast::{TokenKind, VariableDeclaration},
-    syntax::{ expressions::parse_expression, fragments::r#type::parse_type},
+    syntax::{
+        expressions::parse_expression,
+        fragments::{r#type::parse_type, separator::parse_separator},
+    },
 };
 
 pub fn parse_variable_declaration(s: &mut Located<&str>) -> PResult<VariableDeclaration> {
@@ -15,16 +18,17 @@ pub fn parse_variable_declaration(s: &mut Located<&str>) -> PResult<VariableDecl
         TokenKind::WhitespaceHorizontal,
         TokenKind::IdentifierIdentifier,
         opt((
-            TokenKind::WhitespaceHorizontal,
+            opt(TokenKind::WhitespaceHorizontal),
             TokenKind::PonctuationEqualsSign,
-            TokenKind::WhitespaceHorizontal,
+            opt(TokenKind::WhitespaceHorizontal),
             cut_err(parse_expression).context(StrContext::Expected(StrContextValue::Description(
                 "expression",
             ))),
         ))
         .map(|opt| opt.map(|(_, _, _, expr)| expr)),
+        cut_err(parse_separator),
     )
-        .map(|(ty, _, name, value)| VariableDeclaration { ty, name, value })
+        .map(|(ty, _, name, value, _)| VariableDeclaration { ty, name, value })
         .parse_next(s)
 }
 

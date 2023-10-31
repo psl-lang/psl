@@ -1,18 +1,24 @@
 mod write;
 
-use winnow::{combinator::alt, Located, PResult, Parser};
+use winnow::{
+    combinator::{alt, terminated},
+    Located, PResult, Parser,
+};
 
 use crate::ast::Statement;
 
 use self::write::parse_write;
 
-use super::{declarations::parse_declaration, expressions::parse_expression};
+use super::{
+    declarations::parse_declaration, expressions::parse_expression,
+    fragments::separator::parse_separator,
+};
 
 pub fn parse_statement(s: &mut Located<&str>) -> PResult<Statement> {
     alt((
         parse_declaration.map(Statement::Declaration),
         parse_write.map(Statement::Write),
-        parse_expression.map(Statement::Expression),
+        terminated(parse_expression, parse_separator).map(Statement::Expression),
     ))
     .parse_next(s)
 }
