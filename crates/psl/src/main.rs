@@ -1,9 +1,8 @@
-use ariadne::{Label, Report, Source};
-use psl::{
-    generate_codes,
-    syntax::{parse_program, parse_token},
-};
+mod diagnostics;
+
+use psl::{generate_codes, syntax::parse_program};
 use std::{
+    borrow::Cow,
     env::args,
     fs,
     path::PathBuf,
@@ -11,6 +10,8 @@ use std::{
     str::FromStr,
 };
 use winnow::{Located, Parser};
+
+use crate::diagnostics::Diagnostic;
 
 fn main() -> ExitCode {
     let Some(path) = args().nth(1) else {
@@ -26,28 +27,7 @@ fn main() -> ExitCode {
     let ast = match parse_program.parse(Located::new(content.as_ref())) {
         Ok(ast) => ast,
         Err(e) => {
-            let next_token = parse_token
-                .parse_next(&mut Located::new(&e.input()[e.offset()..]))
-                .map(|token| token.content)
-                .unwrap();
-
-            let mut error_message = e.inner().to_string();
-            if error_message.is_empty() {
-                error_message = format!("unexpected token {next_token:?}");
-            }
-
-            let raw_input: &str = &e.input();
-
-            Report::build(ariadne::ReportKind::Error, &path, e.offset())
-                .with_code(1)
-                .with_message(error_message)
-                .with_label(Label::new((
-                    &path,
-                    e.offset()..e.offset() + next_token.len(),
-                )))
-                .finish()
-                .print((&path, Source::from(raw_input)))
-                .unwrap();
+            Diagnostic::from_parse_error(Cow::Borrowed(&path), e).write();
 
             return ExitCode::FAILURE;
         }
