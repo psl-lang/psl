@@ -9,6 +9,9 @@ pub enum TokenKind {
 
     KeywordRead,
     KeywordWrite,
+    KeywordIf,
+    KeywordThen,
+    KeywordElse,
 
     PunctuationAsterisk,
     PunctuationPlusSign,

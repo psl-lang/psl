@@ -9,6 +9,7 @@ mod name;
 mod operator;
 mod read;
 mod simple;
+mod r#if;
 
 pub fn parse_expression(s: &mut Located<&str>) -> PResult<Expression> {
     parse_operator.parse_next(s)
