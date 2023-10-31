@@ -45,13 +45,21 @@ i32 __read_i32()
 {
     __skip_whitespace();
     c8 peek = __peek_c8();
+
+    bool is_negative = peek == '-';
+    if (is_negative)
+    {
+        __consume_c8();
+        peek = __peek_c8();
+    }
+
     if ('0' > peek || peek > '9')
     {
         __sys_panic("cannot read i32", 16);
         return -1;
     }
 
-    i32 result = 0;
+    uint32_t result = 0;
     while ('0' <= peek && peek <= '9')
     {
         __consume_c8();
@@ -59,5 +67,5 @@ i32 __read_i32()
         peek = __peek_c8();
     }
 
-    return result;
+    return is_negative ? ~result + 1 : result;
 }
