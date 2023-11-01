@@ -59,7 +59,7 @@ i32 __read_i32()
         return -1;
     }
 
-    uint32_t result = 0;
+    u32 result = 0;
     while ('0' <= peek && peek <= '9')
     {
         __consume_c8();
