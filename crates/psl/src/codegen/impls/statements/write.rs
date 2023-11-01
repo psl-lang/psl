@@ -15,6 +15,6 @@ impl CodegenNode for WriteStatement {
             Type::Simple(token) => &token.content,
         };
 
-        format!("__write_{}({});\n", ty, self.name.name.content)
+        format!("__write_{}(write_buf, {});\n", ty, self.name.name.content)
     }
 }
