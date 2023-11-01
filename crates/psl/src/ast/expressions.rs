@@ -4,6 +4,7 @@ use super::{Token, Type};
 pub enum Expression {
     Read(ReadExpression),
     Name(NameExpression),
+    If(IfExpression),
     BinaryOperator(BinaryOperatorExpression),
 }
 
@@ -15,6 +16,13 @@ pub enum ReadExpression {
 #[derive(Debug, PartialEq)]
 pub struct NameExpression {
     pub name: Token,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct IfExpression {
+    pub condition: Box<Expression>,
+    pub positive: Box<Expression>,
+    pub negative: Box<Expression>,
 }
 
 #[derive(Debug, PartialEq)]

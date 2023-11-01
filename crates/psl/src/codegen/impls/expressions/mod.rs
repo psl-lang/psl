@@ -1,4 +1,5 @@
 mod binary_operator;
+mod r#if;
 mod name;
 mod read;
 
@@ -12,6 +13,7 @@ impl CodegenNode for Expression {
         match self {
             Expression::Read(node) => ctx.visit(node),
             Expression::Name(node) => ctx.visit(node),
+            Expression::If(node) => ctx.visit(node),
             Expression::BinaryOperator(node) => ctx.visit(node),
         }
     }
