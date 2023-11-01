@@ -5,7 +5,7 @@
 
 i32 __sys_panic(c8 *msg, size_t len)
 {
-    __sys_write(msg, len);
+    write(STDERR_FILENO, msg, len);
     _Exit(1);
     return 0;
 }

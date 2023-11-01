@@ -1,15 +1,41 @@
 #pragma once
+#include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
 
 #include "typedef.h"
 
-void __sys_write(c8 *buf, usize len)
+const usize WRITE_BUF_LEN = 1 << 15;
+usize write_off = 0;
+
+void __flush(c8 *write_buf)
 {
-    write(STDOUT_FILENO, buf, len);
+    write(STDOUT_FILENO, write_buf, write_off);
+    write_off = 0;
 }
 
-void __write_i32(i32 i)
+void __memcpy(char *dest, const char *src, usize len)
+{
+    for (usize i = 0; i < len; ++i)
+    {
+        dest[i] = src[i];
+    }
+}
+
+void __sys_write(c8 *write_buf, c8 *buf, usize len)
+{
+    while (len >= WRITE_BUF_LEN - write_off)
+    {
+        __memcpy(write_buf + write_off, buf, WRITE_BUF_LEN - write_off);
+        buf += WRITE_BUF_LEN - write_off;
+        len -= WRITE_BUF_LEN - write_off;
+        __flush(write_buf);
+    }
+    __memcpy(write_buf + write_off, buf, len);
+    write_off += len;
+}
+
+void __write_i32(c8 *write_buf, i32 i)
 {
     bool is_negative = i < 0;
     if (is_negative)
@@ -31,5 +57,5 @@ void __write_i32(i32 i)
         offset -= 1;
         buf[offset] = '-';
     }
-    __sys_write(buf + offset, 20 - offset);
+    __sys_write(write_buf, buf + offset, 20 - offset);
 }

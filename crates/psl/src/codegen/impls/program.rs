@@ -31,11 +31,14 @@ impl CodegenNode for Program {
         include_rt!(output, "read.h");
 
         output.push_str("int main() {}; int __libc_start_main() {\n");
+        output.push_str("c8 read_buf[READ_BUF_LEN];\n");
+        output.push_str("c8 write_buf[WRITE_BUF_LEN];\n");
 
         for item in self.items {
             output.push_str(&ctx.visit(item));
         }
 
+        output.push_str("__flush(write_buf);\n");
         output.push_str("_Exit(0);\n");
         output.push_str("}\n");
 
