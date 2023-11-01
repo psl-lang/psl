@@ -9,7 +9,7 @@ c8 read_buf[1 << 15];
 usize read_off = READ_BUF_LEN;
 usize read_len = READ_BUF_LEN;
 
-c8 __fill_buf()
+void __fill_buf()
 {
     read_off = 0;
     read_len = read(STDIN_FILENO, read_buf, READ_BUF_LEN);
