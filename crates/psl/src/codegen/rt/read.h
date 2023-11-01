@@ -4,30 +4,30 @@
 #include "typedef.h"
 #include "panic.h"
 
-bool has_read = false;
-c8 buf;
+const usize READ_BUF_LEN = 1 << 15;
+c8 read_buf[1 << 15];
+usize read_off = READ_BUF_LEN;
+usize read_len = READ_BUF_LEN;
 
-c8 __read_c8()
+c8 __fill_buf()
 {
-    c8 buf[1];
-    read(STDIN_FILENO, &buf, 1);
-    return buf[0];
+    read_off = 0;
+    read_len = read(STDIN_FILENO, read_buf, READ_BUF_LEN);
 }
 
 c8 __peek_c8()
 {
-    if (!has_read)
+    if (read_off >= read_len)
     {
-        buf = __read_c8();
-        has_read = true;
+        __fill_buf();
     }
-    return buf;
+    return read_buf[read_off];
 }
 
 c8 __consume_c8()
 {
     c8 result = __peek_c8();
-    buf = __read_c8();
+    read_off++;
     return result;
 }
 

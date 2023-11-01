@@ -4,9 +4,27 @@
 
 #include "typedef.h"
 
+const usize WRITE_BUF_LEN = 1 << 15;
+c8 write_buf[1 << 15];
+usize write_off = WRITE_BUF_LEN;
+
 void __sys_write(c8 *buf, usize len)
 {
-    write(STDOUT_FILENO, buf, len);
+    while (len >= WRITE_BUF_LEN - write_off)
+    {
+        memcpy(write_buf + write_off, buf, WRITE_BUF_LEN - write_off);
+        buf += WRITE_BUF_LEN - write_off;
+        len -= WRITE_BUF_LEN - write_off;
+        write_off = 0;
+        write(STDOUT_FILENO, write_buf, WRITE_BUF_LEN);
+    }
+    memcpy(write_buf + write_off, buf, len);
+    write_off += len;
+}
+
+void __flush()
+{
+    write(STDOUT_FILENO, write_buf, write_off);
 }
 
 void __write_i32(i32 i)
