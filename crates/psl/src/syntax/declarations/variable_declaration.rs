@@ -19,7 +19,7 @@ pub fn parse_variable_declaration(s: &mut Located<&str>) -> PResult<VariableDecl
         TokenKind::IdentifierIdentifier,
         opt((
             opt(TokenKind::WhitespaceHorizontal),
-            TokenKind::PonctuationEqualsSign,
+            TokenKind::PunctuationEqualsSign,
             opt(TokenKind::WhitespaceHorizontal),
             cut_err(parse_expression).context(StrContext::Expected(StrContextValue::Description(
                 "expression",

@@ -20,7 +20,7 @@ pub enum TokenKind {
     PunctuationPercent,
     PunctuationAmpersand,
     PunctuationPipe,
-    PonctuationEqualsSign,
+    PunctuationEqualsSign,
     PunctuationLessSign,
     PunctuationGreaterSign,
     PunctuationExclamationMark,

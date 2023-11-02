@@ -13,7 +13,7 @@ pub fn parse_punctuations(s: &mut Located<&str>) -> PResult<Token> {
         punct("%", TokenKind::PunctuationPercent),
         punct("&", TokenKind::PunctuationAmpersand),
         punct("|", TokenKind::PunctuationPipe),
-        punct("=", TokenKind::PonctuationEqualsSign),
+        punct("=", TokenKind::PunctuationEqualsSign),
         punct("!", TokenKind::PunctuationExclamationMark),
         punct("<", TokenKind::PunctuationLessSign),
         punct(">", TokenKind::PunctuationGreaterSign),

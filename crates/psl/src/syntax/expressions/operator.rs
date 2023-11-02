@@ -37,22 +37,22 @@ pub fn parse_comparison_operator(s: &mut Located<&str>) -> PResult<Expression> {
         alt((
             (
                 TokenKind::PunctuationLessSign,
-                TokenKind::PonctuationEqualsSign,
+                TokenKind::PunctuationEqualsSign,
             )
                 .map(|_| BinaryOperator::LessEqual),
             (
                 TokenKind::PunctuationGreaterSign,
-                TokenKind::PonctuationEqualsSign,
+                TokenKind::PunctuationEqualsSign,
             )
                 .map(|_| BinaryOperator::GreaterEqual),
             (
                 TokenKind::PunctuationExclamationMark,
-                TokenKind::PonctuationEqualsSign,
+                TokenKind::PunctuationEqualsSign,
             )
                 .map(|_| BinaryOperator::NotEqual),
             (
-                TokenKind::PonctuationEqualsSign,
-                TokenKind::PonctuationEqualsSign,
+                TokenKind::PunctuationEqualsSign,
+                TokenKind::PunctuationEqualsSign,
             )
                 .map(|_| BinaryOperator::Equal),
             TokenKind::PunctuationLessSign.map(|_| BinaryOperator::Less),
