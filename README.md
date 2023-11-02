@@ -1,5 +1,5 @@
 <div align="center">
-    <h1>🎈 psl</h1>
+    <h1>🎈psl</h1>
     <p>
         A Modern Programming Language Empowering Algorithmic Thinking
     </p>
