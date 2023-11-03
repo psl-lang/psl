@@ -7,6 +7,10 @@ pub enum TokenKind {
 
     IdentifierIdentifier,
 
+    LiteralDecimal,
+    LiteralHexadecimal,
+    LiteralBinary,
+
     KeywordRead,
     KeywordWrite,
     KeywordIf,

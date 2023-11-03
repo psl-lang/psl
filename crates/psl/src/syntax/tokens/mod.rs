@@ -12,12 +12,14 @@ use crate::ast::{Token, TokenKind};
 use self::{
     identifier::parse_identifier_identifier,
     keyword::parse_keyword,
+    literal::parse_literal,
     punctuations::parse_punctuations,
     whitespaces::{parse_whitespace_horizontal, parse_whitespace_vertical},
 };
 
 mod identifier;
 mod keyword;
+mod literal;
 mod punctuations;
 mod whitespaces;
 
@@ -28,6 +30,7 @@ pub fn parse_token(s: &mut Located<&str>) -> PResult<Token> {
         parse_whitespace_horizontal,
         parse_whitespace_vertical,
         parse_identifier_identifier,
+        parse_literal,
         any.with_span().map(token(TokenKind::Error)),
         success("<eof>").with_span().map(token(TokenKind::Eof)),
     ))
