@@ -24,7 +24,7 @@ impl CodegenNode for Program {
         output.push_str("#include <stddef.h>\n");
         output.push_str("#include <stdbool.h>\n");
         output.push_str("#include <stdint.h>\n");
-        output.push_str("\n");
+        output.push('\n');
         include_rt!(output, "typedef.h");
         include_rt!(output, "write.h");
         include_rt!(output, "panic.h");
@@ -48,7 +48,7 @@ impl CodegenNode for Program {
 
 fn remove_c_preprocessor_codes(s: impl AsRef<str>) -> String {
     s.as_ref()
-        .split("\n")
+        .split('\n')
         .filter(|s| !s.is_empty() && &s[0..1] != "#") // do not support C preprocessor at all
         .collect::<Vec<_>>()
         .join("\n")

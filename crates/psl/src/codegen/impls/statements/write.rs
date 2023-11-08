@@ -8,7 +8,7 @@ impl CodegenNode for WriteStatement {
         let Some(ty) = ctx.get_variable_type(&self.name.name.content) else {
             // @TODO: migrate to diagnostics
             eprintln!("Cannot compile write statement");
-            return "".to_owned()
+            return "".to_owned();
         };
 
         let ty = match ty {

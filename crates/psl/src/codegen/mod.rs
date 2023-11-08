@@ -8,6 +8,6 @@ mod visitor;
 
 pub fn generate_codes(ast: Program) -> String {
     let mut ctx = CodegenContext::new();
-    let output = ctx.visit(ast);
-    output
+
+    ctx.visit(ast)
 }
