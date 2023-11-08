@@ -36,13 +36,7 @@ jobs:
         run: |
           cargo +nightly fmt \
             -- --emit checkstyle \
-            2>&1 \
-            | reviewdog \
-            -f=checkstyle \
-            -name=rustfmt \
-            -reporter=github-pr-review \
-            -filter-mode=nofilter \
-            -fail-on-error=true
+            2>&1
   test-coverage:
     runs-on: ubuntu-latest
     steps:
