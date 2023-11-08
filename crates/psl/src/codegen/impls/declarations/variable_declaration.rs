@@ -12,11 +12,11 @@ impl CodegenNode for VariableDeclaration {
             Type::Simple(token) => output.push_str(&token.content),
         }
 
-        output.push_str(" ");
+        output.push(' ');
         output.push_str(&self.name.content);
 
         if let Some(node) = self.value {
-            output.push_str("=");
+            output.push('=');
             output.push_str(&ctx.visit(node))
         }
 

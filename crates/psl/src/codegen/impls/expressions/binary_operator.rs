@@ -7,9 +7,9 @@ impl CodegenNode for BinaryOperatorExpression {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
         let mut output = String::new();
 
-        output.push_str("(");
+        output.push('(');
         output.push_str(&ctx.visit(self.lhs));
-        output.push_str(")");
+        output.push(')');
 
         /*
          * @TODO:
@@ -33,9 +33,9 @@ impl CodegenNode for BinaryOperatorExpression {
 
         output.push_str(operator);
 
-        output.push_str("(");
+        output.push('(');
         output.push_str(&ctx.visit(self.rhs));
-        output.push_str(")");
+        output.push(')');
 
         output
     }
