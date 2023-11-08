@@ -16,12 +16,12 @@ use crate::diagnostics::Diagnostic;
 fn main() -> ExitCode {
     let Some(path) = args().nth(1) else {
         eprintln!("please specify file to compile");
-        return ExitCode::FAILURE
+        return ExitCode::FAILURE;
     };
 
     let Ok(content) = fs::read_to_string(&path) else {
         eprintln!("file not found: {path}");
-        return ExitCode::FAILURE
+        return ExitCode::FAILURE;
     };
 
     let ast = match parse_program.parse(Located::new(content.as_ref())) {
