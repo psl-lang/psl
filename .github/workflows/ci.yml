@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
       - uses: reviewdog/action-setup@v1
       - name: check clippy
         env:
@@ -29,6 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: nightly
       - uses: reviewdog/action-setup@v1
       - name: check rustfmt
         env:
@@ -36,7 +40,12 @@ jobs:
         run: |
           cargo +nightly fmt \
             -- --emit checkstyle \
-            2>&1
+            | reviewdog \
+            -f=checkstyle \
+            -name=rustfmt \
+            -reporter=github-pr-review \
+            -filter-mode=nofilter \
+            -fail-on-error=true
   test-coverage:
     runs-on: ubuntu-latest
     steps:
