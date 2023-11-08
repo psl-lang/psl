@@ -17,7 +17,7 @@ jobs:
             -q --message-format short \
             --workspace \
             -- -Dwarnings \
-            2 > &1 \
+            2>&1 \
             | reviewdog \
             -f=clippy \
             -name=clippy \
