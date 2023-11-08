@@ -1,0 +1,12 @@
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+name: CI
+
+jobs:
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo build
