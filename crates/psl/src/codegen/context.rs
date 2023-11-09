@@ -6,6 +6,12 @@ pub struct CodegenContext {
     variable_names: HashMap<String, Type>,
 }
 
+impl Default for CodegenContext {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CodegenContext {
     pub fn new() -> CodegenContext {
         CodegenContext {
