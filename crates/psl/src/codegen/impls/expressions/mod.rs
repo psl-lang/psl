@@ -5,7 +5,7 @@ mod read;
 
 use crate::{
     ast::Expression,
-    codegen::{context::CodegenContext, visitor::CodegenNode},
+    codegen::{construct::Type, context::CodegenContext, visitor::CodegenNode},
 };
 
 impl CodegenNode for Expression {
@@ -15,6 +15,17 @@ impl CodegenNode for Expression {
             Expression::Name(node) => ctx.visit(node),
             Expression::If(node) => ctx.visit(node),
             Expression::BinaryOperator(node) => ctx.visit(node),
+        }
+    }
+}
+
+impl Expression {
+    pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
+        match self {
+            Expression::Read(expr) => expr.infer_type(ctx),
+            Expression::Name(expr) => expr.infer_type(ctx),
+            Expression::If(expr) => expr.infer_type(ctx),
+            Expression::BinaryOperator(_) => todo!(),
         }
     }
 }

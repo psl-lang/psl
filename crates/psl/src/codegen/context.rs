@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::ast::Type;
+use super::construct::Type;
 
 pub struct CodegenContext {
     variable_names: HashMap<String, Type>,

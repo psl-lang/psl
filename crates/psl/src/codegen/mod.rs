@@ -2,6 +2,7 @@ use crate::ast::Program;
 
 use self::context::CodegenContext;
 
+pub mod construct;
 mod context;
 mod impls;
 mod visitor;
