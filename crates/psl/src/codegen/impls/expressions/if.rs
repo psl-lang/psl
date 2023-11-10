@@ -1,6 +1,6 @@
 use crate::{
     ast::IfExpression,
-    codegen::{context::CodegenContext, visitor::CodegenNode},
+    codegen::{construct::Type, context::CodegenContext, visitor::CodegenNode},
 };
 
 impl CodegenNode for IfExpression {
@@ -16,5 +16,14 @@ impl CodegenNode for IfExpression {
         output.push(')');
 
         output
+    }
+}
+
+impl IfExpression {
+    pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
+        let positive = self.positive.infer_type(ctx)?;
+        let negative = self.negative.infer_type(ctx)?;
+
+        positive.union_with(negative)
     }
 }

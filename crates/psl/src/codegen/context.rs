@@ -1,9 +1,15 @@
 use std::collections::HashMap;
 
-use crate::ast::Type;
+use super::construct::Type;
 
 pub struct CodegenContext {
     variable_names: HashMap<String, Type>,
+}
+
+impl Default for CodegenContext {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl CodegenContext {
