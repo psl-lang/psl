@@ -1,13 +1,13 @@
 use super::{Declaration, Expression, NameExpression};
 
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Statement {
     Declaration(Declaration),
     Write(WriteStatement),
     Expression(Expression),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct WriteStatement {
     pub name: NameExpression,
 }

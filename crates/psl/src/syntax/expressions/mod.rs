@@ -5,6 +5,7 @@ use crate::ast::Expression;
 pub use name::parse_name;
 use operator::parse_operator;
 
+mod block;
 mod r#if;
 mod name;
 mod operator;
