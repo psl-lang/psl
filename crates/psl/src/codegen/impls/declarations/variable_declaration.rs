@@ -21,6 +21,8 @@ impl CodegenNode for VariableDeclaration {
 
         output.push_str(";\n");
 
-        output
+        ctx.push_main(&output);
+
+        "".to_owned()
     }
 }

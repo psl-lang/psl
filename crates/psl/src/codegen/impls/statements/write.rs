@@ -10,10 +10,12 @@ impl CodegenNode for WriteStatement {
             panic!("There is no variable named {:?}", self.name.name.content);
         };
 
-        format!(
+        ctx.push_main(&format!(
             "__write_{}(write_buf, {});\n",
             ty.as_c_type(),
             self.name.name.content
-        )
+        ));
+
+        "".to_owned()
     }
 }
