@@ -4,12 +4,12 @@ use crate::{
 };
 
 macro_rules! include_rt {
-    ($output:expr, $file:literal) => {
-        $output.push_str(concat!("// ", $file, "\n"));
-        $output.push_str(&remove_c_preprocessor_codes(include_str!(concat!(
+    ($ctx:expr, $file:literal) => {
+        $ctx.push_header(concat!("// ", $file, "\n"));
+        $ctx.push_header(&remove_c_preprocessor_codes(include_str!(concat!(
             "../rt/", $file
         ))));
-        $output.push_str("\n\n")
+        $ctx.push_header("\n\n")
     };
 }
 
@@ -20,27 +20,28 @@ impl CodegenNode for Program {
             &include_str!("../rt/header.h")
                 .replace("{{CARGO_PKG_VERSION}}", env!("CARGO_PKG_VERSION")),
         );
-        output.push_str("#include <unistd.h>\n");
-        output.push_str("#include <stddef.h>\n");
-        output.push_str("#include <stdbool.h>\n");
-        output.push_str("#include <stdint.h>\n");
-        output.push('\n');
-        include_rt!(output, "typedef.h");
-        include_rt!(output, "write.h");
-        include_rt!(output, "panic.h");
-        include_rt!(output, "read.h");
+        ctx.push_header("#include <unistd.h>\n");
+        ctx.push_header("#include <stddef.h>\n");
+        ctx.push_header("#include <stdbool.h>\n");
+        ctx.push_header("#include <stdint.h>\n");
+        ctx.push_header("\n");
+        include_rt!(ctx, "typedef.h");
+        include_rt!(ctx, "write.h");
+        include_rt!(ctx, "panic.h");
+        include_rt!(ctx, "read.h");
 
-        output.push_str("int main() {}; int __libc_start_main() {\n");
-        output.push_str("c8 read_buf[READ_BUF_LEN];\n");
-        output.push_str("c8 write_buf[WRITE_BUF_LEN];\n");
+        ctx.push_header("int main() {}; int __libc_start_main() {\n");
+        ctx.push_header("c8 read_buf[READ_BUF_LEN];\n");
+        ctx.push_header("c8 write_buf[WRITE_BUF_LEN];\n");
 
         for item in self.items {
-            output.push_str(&ctx.visit(item));
+            let output = ctx.visit(item);
+            ctx.push_main(&output);
         }
 
-        output.push_str("__flush(write_buf);\n");
-        output.push_str("_Exit(0);\n");
-        output.push_str("}\n");
+        ctx.push_footer("__flush(write_buf);\n");
+        ctx.push_footer("_Exit(0);\n");
+        ctx.push_footer("}\n");
 
         output
     }
