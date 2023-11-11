@@ -8,6 +8,7 @@ pub enum Type {
     I64,
     Integer,
     Bool,
+    Tuple(Vec<Type>),
 }
 
 impl TryFrom<ast::Type> for Type {
@@ -32,6 +33,14 @@ impl fmt::Display for Type {
             Type::I64 => write!(f, "i64"),
             Type::Integer => write!(f, "{{integer}}"),
             Type::Bool => write!(f, "bool"),
+            Type::Tuple(vec) => write!(
+                f,
+                "({})",
+                vec.iter()
+                    .map(|ty| ty.to_string())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ),
         }
     }
 }
@@ -43,6 +52,7 @@ impl Type {
             Type::I64 => "i64".to_string(),
             Type::Integer => Type::I32.as_c_type(),
             Type::Bool => "bool".to_string(),
+            Type::Tuple(_) => todo!("tuple type is not supported now"),
         }
     }
 
