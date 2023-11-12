@@ -1,6 +1,6 @@
 use crate::{
     ast::{BinaryOperator, BinaryOperatorExpression},
-    codegen::{context::CodegenContext, visitor::CodegenNode},
+    codegen::{construct::Type, context::CodegenContext, visitor::CodegenNode},
 };
 
 impl CodegenNode for BinaryOperatorExpression {
@@ -38,5 +38,30 @@ impl CodegenNode for BinaryOperatorExpression {
         output.push(')');
 
         output
+    }
+}
+
+impl BinaryOperatorExpression {
+    /**
+     * @TODO:
+     * when we introduce operator overloading, we should change this.
+     */
+    pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
+        match self.operator {
+            BinaryOperator::Add
+            | BinaryOperator::Subtract
+            | BinaryOperator::Multiply
+            | BinaryOperator::Divide
+            | BinaryOperator::Modulus => self.lhs.infer_type(ctx),
+
+            BinaryOperator::Equal
+            | BinaryOperator::NotEqual
+            | BinaryOperator::Less
+            | BinaryOperator::Greater
+            | BinaryOperator::LessEqual
+            | BinaryOperator::GreaterEqual
+            | BinaryOperator::LogiacalAnd
+            | BinaryOperator::LogicalOr => Ok(Type::Bool),
+        }
     }
 }

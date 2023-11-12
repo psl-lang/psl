@@ -27,7 +27,7 @@ impl Expression {
             Expression::Read(expr) => expr.infer_type(ctx),
             Expression::Name(expr) => expr.infer_type(ctx),
             Expression::If(expr) => expr.infer_type(ctx),
-            Expression::BinaryOperator(_) => todo!(),
+            Expression::BinaryOperator(expr) => expr.infer_type(ctx),
             Expression::Block(expr) => expr.infer_type(ctx),
         }
     }
