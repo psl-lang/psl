@@ -6,7 +6,6 @@ pub enum Expression {
     Name(NameExpression),
     If(IfExpression),
     BinaryOperator(BinaryOperatorExpression),
-    Block(BlockExpression),
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -22,8 +21,14 @@ pub struct NameExpression {
 #[derive(Clone, Debug, PartialEq)]
 pub struct IfExpression {
     pub condition: Box<Expression>,
-    pub positive: Box<Expression>,
-    pub negative: Box<Expression>,
+    pub positive: Box<ExpressionOrBlock>,
+    pub negative: Option<Box<ExpressionOrBlock>>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum ExpressionOrBlock {
+    Expression(Expression),
+    Block(Block),
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -49,6 +54,3 @@ pub enum BinaryOperator {
     LogiacalAnd,
     LogicalOr,
 }
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct BlockExpression(pub Block);

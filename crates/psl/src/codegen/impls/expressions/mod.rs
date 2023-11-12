@@ -1,5 +1,4 @@
 mod binary_operator;
-mod block;
 mod r#if;
 mod name;
 mod read;
@@ -16,7 +15,6 @@ impl CodegenNode for Expression {
             Expression::Name(node) => ctx.visit(node),
             Expression::If(node) => ctx.visit(node),
             Expression::BinaryOperator(node) => ctx.visit(node),
-            Expression::Block(node) => ctx.visit(node),
         }
     }
 }
@@ -28,7 +26,6 @@ impl Expression {
             Expression::Name(expr) => expr.infer_type(ctx),
             Expression::If(expr) => expr.infer_type(ctx),
             Expression::BinaryOperator(expr) => expr.infer_type(ctx),
-            Expression::Block(expr) => expr.infer_type(ctx),
         }
     }
 }

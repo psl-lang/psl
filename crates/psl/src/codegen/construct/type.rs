@@ -46,6 +46,8 @@ impl fmt::Display for Type {
 }
 
 impl Type {
+    pub const UNIT: Type = Type::Tuple(Vec::new());
+
     pub fn as_c_type(&self) -> String {
         match self {
             Type::I32 => "i32".to_string(),
