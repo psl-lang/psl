@@ -5,8 +5,39 @@ use crate::{
 
 impl CodegenNode for BinaryOperatorExpression {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
-        let mut output = String::new();
+        if matches!(
+            self.operator,
+            BinaryOperator::LogiacalAnd | BinaryOperator::LogicalOr
+        ) {
+            let mut lhs = String::new();
+            let output_name = ctx.generate_random_name();
+            let ty = self.lhs.infer_type(ctx).unwrap().as_c_type();
+            lhs.push_str(&format!(
+                "{} {} = {};\n",
+                ty,
+                &output_name,
+                ctx.visit(self.lhs)
+            ));
 
+            let should_negate = self.operator == BinaryOperator::LogicalOr;
+
+            ctx.push_main(&lhs);
+
+            ctx.push_main(&format!(
+                "if ({}{}) {{\n",
+                if should_negate { "!" } else { "" },
+                &output_name,
+            ));
+
+            let rhs = ctx.visit(self.rhs);
+            ctx.push_main(&format!("{} = {};\n", &output_name, rhs));
+
+            ctx.push_main("}\n");
+
+            return output_name;
+        }
+
+        let mut output = String::new();
         output.push('(');
         output.push_str(&ctx.visit(self.lhs));
         output.push(')');
@@ -27,8 +58,7 @@ impl CodegenNode for BinaryOperatorExpression {
             BinaryOperator::Greater => ">",
             BinaryOperator::LessEqual => "<=",
             BinaryOperator::GreaterEqual => "<=",
-            BinaryOperator::LogiacalAnd => "&&",
-            BinaryOperator::LogicalOr => "||",
+            BinaryOperator::LogiacalAnd | BinaryOperator::LogicalOr => unreachable!(),
         };
 
         output.push_str(operator);
