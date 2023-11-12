@@ -14,7 +14,11 @@ pub fn parse_operator(s: &mut Located<&str>) -> PResult<Expression> {
 
 pub fn parse_or_operator(s: &mut Located<&str>) -> PResult<Expression> {
     binary_operator(
-        (TokenKind::PunctuationPipe, TokenKind::PunctuationPipe).map(|_| BinaryOperator::LogicalOr),
+        (
+            TokenKind::PunctuationVerticalLine,
+            TokenKind::PunctuationVerticalLine,
+        )
+            .map(|_| BinaryOperator::LogicalOr),
         parse_and_operator,
     )
     .parse_next(s)
@@ -36,12 +40,12 @@ pub fn parse_comparison_operator(s: &mut Located<&str>) -> PResult<Expression> {
     binary_operator(
         alt((
             (
-                TokenKind::PunctuationLessSign,
+                TokenKind::PunctuationLessThanSign,
                 TokenKind::PunctuationEqualsSign,
             )
                 .map(|_| BinaryOperator::LessEqual),
             (
-                TokenKind::PunctuationGreaterSign,
+                TokenKind::PunctuationGreaterThanSign,
                 TokenKind::PunctuationEqualsSign,
             )
                 .map(|_| BinaryOperator::GreaterEqual),
@@ -55,8 +59,8 @@ pub fn parse_comparison_operator(s: &mut Located<&str>) -> PResult<Expression> {
                 TokenKind::PunctuationEqualsSign,
             )
                 .map(|_| BinaryOperator::Equal),
-            TokenKind::PunctuationLessSign.map(|_| BinaryOperator::Less),
-            TokenKind::PunctuationGreaterSign.map(|_| BinaryOperator::Greater),
+            TokenKind::PunctuationLessThanSign.map(|_| BinaryOperator::Less),
+            TokenKind::PunctuationGreaterThanSign.map(|_| BinaryOperator::Greater),
         )),
         parse_addsub_operator,
     )
@@ -79,7 +83,7 @@ pub fn parse_muldiv_operator(s: &mut Located<&str>) -> PResult<Expression> {
         alt((
             TokenKind::PunctuationAsterisk.map(|_| BinaryOperator::Multiply),
             TokenKind::PunctuationSolidus.map(|_| BinaryOperator::Divide),
-            TokenKind::PunctuationPercent.map(|_| BinaryOperator::Modulus),
+            TokenKind::PunctuationPercentSign.map(|_| BinaryOperator::Modulus),
         )),
         parse_simple_expression,
     )
