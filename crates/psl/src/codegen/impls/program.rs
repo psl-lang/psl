@@ -15,8 +15,7 @@ macro_rules! include_rt {
 
 impl CodegenNode for Program {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
-        let mut output = String::new();
-        output.push_str(
+        ctx.push_header(
             &include_str!("../rt/header.h")
                 .replace("{{CARGO_PKG_VERSION}}", env!("CARGO_PKG_VERSION")),
         );
@@ -43,7 +42,7 @@ impl CodegenNode for Program {
         ctx.push_footer("_Exit(0);\n");
         ctx.push_footer("}\n");
 
-        output
+        "".to_owned()
     }
 }
 
