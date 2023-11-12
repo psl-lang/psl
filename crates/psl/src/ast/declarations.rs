@@ -1,11 +1,11 @@
 use super::{Expression, Token, Type};
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub enum Declaration {
     Variable(VariableDeclaration),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub struct VariableDeclaration {
     pub ty: Type,
     pub name: Token,
