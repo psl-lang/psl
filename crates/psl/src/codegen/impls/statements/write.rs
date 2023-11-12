@@ -1,11 +1,11 @@
 use crate::{
     ast::WriteStatement,
-    codegen::{context::CodegenContext, visitor::CodegenNode},
+    codegen::{context::CodegenContext, scope::Scope, visitor::CodegenNode},
 };
 
 impl CodegenNode for WriteStatement {
-    fn produce_code(self, ctx: &mut CodegenContext) -> String {
-        let Some(ty) = ctx.get_variable_type(&self.name.name.content) else {
+    fn produce_code(self, ctx: &mut CodegenContext, scope: &mut Scope) -> String {
+        let Some(ty) = scope.get_variable_type(&self.name.name.content) else {
             // @TODO: migrate to diagnostics
             panic!("There is no variable named {:?}", self.name.name.content);
         };

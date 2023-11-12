@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::ast;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Type {
     I32,
     I64,

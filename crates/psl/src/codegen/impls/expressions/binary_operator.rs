@@ -1,22 +1,22 @@
 use crate::{
     ast::{BinaryOperator, BinaryOperatorExpression},
-    codegen::{construct::Type, context::CodegenContext, visitor::CodegenNode},
+    codegen::{construct::Type, context::CodegenContext, scope::Scope, visitor::CodegenNode},
 };
 
 impl CodegenNode for BinaryOperatorExpression {
-    fn produce_code(self, ctx: &mut CodegenContext) -> String {
+    fn produce_code(self, ctx: &mut CodegenContext, scope: &mut Scope) -> String {
         if matches!(
             self.operator,
             BinaryOperator::LogiacalAnd | BinaryOperator::LogicalOr
         ) {
             let mut lhs = String::new();
             let output_name = ctx.generate_random_name();
-            let ty = self.lhs.infer_type(ctx).unwrap().as_c_type();
+            let ty = self.lhs.infer_type(ctx, scope).unwrap().as_c_type();
             lhs.push_str(&format!(
                 "{} {} = {};\n",
                 ty,
                 &output_name,
-                ctx.visit(self.lhs)
+                self.lhs.produce_code(ctx, scope)
             ));
 
             let should_negate = self.operator == BinaryOperator::LogicalOr;
@@ -29,7 +29,7 @@ impl CodegenNode for BinaryOperatorExpression {
                 &output_name,
             ));
 
-            let rhs = ctx.visit(self.rhs);
+            let rhs = self.rhs.produce_code(ctx, scope);
             ctx.push_main(&format!("{} = {};\n", &output_name, rhs));
 
             ctx.push_main("}\n");
@@ -39,7 +39,7 @@ impl CodegenNode for BinaryOperatorExpression {
 
         let mut output = String::new();
         output.push('(');
-        output.push_str(&ctx.visit(self.lhs));
+        output.push_str(&self.lhs.produce_code(ctx, scope));
         output.push(')');
 
         /*
@@ -64,7 +64,7 @@ impl CodegenNode for BinaryOperatorExpression {
         output.push_str(operator);
 
         output.push('(');
-        output.push_str(&ctx.visit(self.rhs));
+        output.push_str(&self.rhs.produce_code(ctx, scope));
         output.push(')');
 
         output
@@ -76,13 +76,13 @@ impl BinaryOperatorExpression {
      * @TODO:
      * when we introduce operator overloading, we should change this.
      */
-    pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
+    pub fn infer_type(&self, ctx: &CodegenContext, scope: &mut Scope) -> Result<Type, String> {
         match self.operator {
             BinaryOperator::Add
             | BinaryOperator::Subtract
             | BinaryOperator::Multiply
             | BinaryOperator::Divide
-            | BinaryOperator::Modulus => self.lhs.infer_type(ctx),
+            | BinaryOperator::Modulus => self.lhs.infer_type(ctx, scope),
 
             BinaryOperator::Equal
             | BinaryOperator::NotEqual

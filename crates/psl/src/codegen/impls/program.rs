@@ -1,6 +1,6 @@
 use crate::{
     ast::Program,
-    codegen::{context::CodegenContext, visitor::CodegenNode},
+    codegen::{context::CodegenContext, scope::Scope, visitor::CodegenNode},
 };
 
 macro_rules! include_rt {
@@ -14,7 +14,7 @@ macro_rules! include_rt {
 }
 
 impl CodegenNode for Program {
-    fn produce_code(self, ctx: &mut CodegenContext) -> String {
+    fn produce_code(self, ctx: &mut CodegenContext, scope: &mut Scope) -> String {
         ctx.push_header(
             &include_str!("../rt/header.h")
                 .replace("{{CARGO_PKG_VERSION}}", env!("CARGO_PKG_VERSION")),
@@ -34,7 +34,7 @@ impl CodegenNode for Program {
         ctx.push_header("c8 write_buf[WRITE_BUF_LEN];\n");
 
         for item in self.items {
-            let output = ctx.visit(item);
+            let output = item.produce_code(ctx, scope);
             ctx.push_main(&output);
         }
 

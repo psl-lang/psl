@@ -1,12 +1,12 @@
 use crate::{
     ast::VariableDeclaration,
-    codegen::{construct::Type, context::CodegenContext, visitor::CodegenNode},
+    codegen::{construct::Type, context::CodegenContext, scope::Scope, visitor::CodegenNode},
 };
 
 impl CodegenNode for VariableDeclaration {
-    fn produce_code(self, ctx: &mut CodegenContext) -> String {
+    fn produce_code(self, ctx: &mut CodegenContext, scope: &mut Scope) -> String {
         let ty = Type::try_from(self.ty).unwrap();
-        ctx.add_variable(self.name.content.clone(), ty.clone());
+        scope.add_variable(self.name.content.clone(), ty.clone());
 
         let mut output = String::new();
 
@@ -16,7 +16,7 @@ impl CodegenNode for VariableDeclaration {
 
         if let Some(node) = self.value {
             output.push('=');
-            output.push_str(&ctx.visit(node))
+            output.push_str(&node.produce_code(ctx, scope))
         }
 
         output.push_str(";\n");
