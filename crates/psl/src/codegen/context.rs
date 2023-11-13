@@ -1,8 +1,4 @@
-use std::{
-    cell::{Ref, RefCell},
-    hash::Hash,
-    rc::Rc,
-};
+use std::{cell::Ref, hash::Hash};
 
 use super::{construct::Scope, pass::NamesResolved};
 
