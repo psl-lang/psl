@@ -1,6 +1,10 @@
 use crate::{
     ast::{BinaryOperator, BinaryOperatorExpression},
-    codegen::{context::CodegenContext, visitor::CodegenNode},
+    codegen::{
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 impl CodegenNode for BinaryOperatorExpression {
@@ -39,4 +43,8 @@ impl CodegenNode for BinaryOperatorExpression {
 
         output
     }
+}
+
+impl NameResolutionPass for BinaryOperatorExpression {
+    fn resolve(&self, _ctx: &mut NameResolutionContext) {}
 }

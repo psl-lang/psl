@@ -1,6 +1,11 @@
 use crate::{
     ast::IfExpression,
-    codegen::{construct::Type, context::CodegenContext, visitor::CodegenNode},
+    codegen::{
+        construct::{Scope, Type},
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 impl CodegenNode for IfExpression {
@@ -19,10 +24,14 @@ impl CodegenNode for IfExpression {
     }
 }
 
+impl NameResolutionPass for IfExpression {
+    fn resolve(&self, _ctx: &mut NameResolutionContext) {}
+}
+
 impl IfExpression {
-    pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
-        let positive = self.positive.infer_type(ctx)?;
-        let negative = self.negative.infer_type(ctx)?;
+    pub fn infer_type(&self, scope: &Scope) -> Result<Type, String> {
+        let positive = self.positive.infer_type(scope)?;
+        let negative = self.negative.infer_type(scope)?;
 
         positive.union_with(negative)
     }
