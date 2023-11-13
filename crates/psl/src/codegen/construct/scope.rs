@@ -37,3 +37,9 @@ impl Scope {
         })
     }
 }
+
+impl Default for Scope {
+    fn default() -> Self {
+        Scope::new()
+    }
+}
