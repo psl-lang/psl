@@ -1,6 +1,6 @@
 use super::{Declaration, Statement};
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub enum Item {
     Declaration(Declaration),
     Statement(Statement),

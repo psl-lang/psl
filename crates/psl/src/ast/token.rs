@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub enum TokenKind {
     WhitespaceHorizontal,
     WhitespaceVertical,
@@ -50,7 +50,7 @@ pub enum TokenKind {
     Eof,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub struct Token {
     pub kind: TokenKind,
     pub content: String,
