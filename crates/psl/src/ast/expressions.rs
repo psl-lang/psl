@@ -1,6 +1,6 @@
 use super::{Token, Type};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub enum Expression {
     Read(ReadExpression),
     Name(NameExpression),
@@ -8,31 +8,31 @@ pub enum Expression {
     BinaryOperator(BinaryOperatorExpression),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub enum ReadExpression {
     Type(Type),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub struct NameExpression {
     pub name: Token,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub struct IfExpression {
     pub condition: Box<Expression>,
     pub positive: Box<Expression>,
     pub negative: Box<Expression>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub struct BinaryOperatorExpression {
     pub lhs: Box<Expression>,
     pub operator: BinaryOperator,
     pub rhs: Box<Expression>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub enum BinaryOperator {
     Add,
     Subtract,
