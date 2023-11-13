@@ -20,7 +20,7 @@ pub struct NamesResolved {
 
 impl NamesResolved {
     fn make_keys<K: Hash + 'static>(key: &K) -> AstKey {
-        let ty = <K as Any>::type_id(&key);
+        let ty = <K as Any>::type_id(key);
 
         let mut hasher = DefaultHasher::new();
         key.hash(&mut hasher);
