@@ -36,12 +36,8 @@ impl Scope {
 
     pub fn get_variable_type(&self, name: &String) -> Option<Type> {
         self.variable_names.get(name).cloned().or_else(|| {
-            self.parent.and_then(|parent| {
-                self.root
-                    .borrow()
-                    .get(&parent)
-                    .and_then(|parent| parent.get_variable_type(name))
-            })
+            self.parent
+                .and_then(|parent| self.root.borrow().vec[parent].get_variable_type(name))
         })
     }
 }

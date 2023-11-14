@@ -6,7 +6,7 @@ mod read;
 use crate::{
     ast::Expression,
     codegen::{
-        construct::{Scope, Type},
+        construct::Type,
         context::CodegenContext,
         pass::{NameResolutionContext, NameResolutionPass},
         visitor::CodegenNode,
@@ -36,12 +36,12 @@ impl NameResolutionPass for Expression {
 }
 
 impl Expression {
-    pub fn infer_type(&self, scope: &Scope) -> Result<Type, String> {
+    pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
         match self {
-            Expression::Read(expr) => expr.infer_type(scope),
-            Expression::Name(expr) => expr.infer_type(scope),
-            Expression::If(expr) => expr.infer_type(scope),
-            Expression::BinaryOperator(expr) => expr.infer_type(scope),
+            Expression::Read(expr) => expr.infer_type(ctx),
+            Expression::Name(expr) => expr.infer_type(ctx),
+            Expression::If(expr) => expr.infer_type(ctx),
+            Expression::BinaryOperator(expr) => expr.infer_type(ctx),
         }
     }
 }

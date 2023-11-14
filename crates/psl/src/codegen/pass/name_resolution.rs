@@ -29,7 +29,7 @@ impl<T: NameResolutionPass + Hash + 'static> NameResolutionPass for Option<T> {
 type AstKey = (TypeId, u64);
 
 pub struct NamesResolved {
-    vec: Vec<Scope>,
+    pub(crate) vec: Vec<Scope>,
     resolved: HashMap<AstKey, usize>,
 }
 

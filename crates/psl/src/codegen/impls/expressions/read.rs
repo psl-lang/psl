@@ -1,7 +1,7 @@
 use crate::{
     ast::ReadExpression,
     codegen::{
-        construct::{Scope, Type},
+        construct::Type,
         context::CodegenContext,
         pass::{NameResolutionContext, NameResolutionPass},
         visitor::CodegenNode,
@@ -24,7 +24,7 @@ impl NameResolutionPass for ReadExpression {
 }
 
 impl ReadExpression {
-    pub fn infer_type(&self, _scope: &Scope) -> Result<Type, String> {
+    pub fn infer_type(&self, _ctx: &CodegenContext) -> Result<Type, String> {
         match self {
             ReadExpression::Type(ty) => ty.clone().try_into(),
         }

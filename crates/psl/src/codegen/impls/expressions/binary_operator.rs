@@ -1,7 +1,7 @@
 use crate::{
     ast::{BinaryOperator, BinaryOperatorExpression},
     codegen::{
-        construct::{Scope, Type},
+        construct::Type,
         context::CodegenContext,
         pass::{NameResolutionContext, NameResolutionPass},
         visitor::CodegenNode,
@@ -16,7 +16,7 @@ impl CodegenNode for BinaryOperatorExpression {
         ) {
             let mut lhs = String::new();
             let output_name = ctx.generate_random_name();
-            let ty = self.lhs.infer_type(&ctx.scope(&self)).unwrap().as_c_type();
+            let ty = self.lhs.infer_type(ctx).unwrap().as_c_type();
             lhs.push_str(&format!(
                 "{} {} = {};\n",
                 ty,
@@ -88,13 +88,13 @@ impl BinaryOperatorExpression {
      * @TODO:
      * when we introduce operator overloading, we should change this.
      */
-    pub fn infer_type(&self, scope: &Scope) -> Result<Type, String> {
+    pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
         match self.operator {
             BinaryOperator::Add
             | BinaryOperator::Subtract
             | BinaryOperator::Multiply
             | BinaryOperator::Divide
-            | BinaryOperator::Modulus => self.lhs.infer_type(scope),
+            | BinaryOperator::Modulus => self.lhs.infer_type(ctx),
 
             BinaryOperator::Equal
             | BinaryOperator::NotEqual

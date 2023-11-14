@@ -1,7 +1,7 @@
 use crate::{
     ast::{ExpressionOrBlock, IfExpression},
     codegen::{
-        construct::{Scope, Type},
+        construct::Type,
         context::CodegenContext,
         pass::{NameResolutionContext, NameResolutionPass},
         visitor::CodegenNode,
@@ -12,7 +12,7 @@ impl CodegenNode for IfExpression {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
         let result_variable = ctx.generate_random_name();
 
-        let ty = self.infer_type(&ctx.scope(&self)).unwrap();
+        let ty = self.infer_type(ctx).unwrap();
         ctx.push_main(&ty.as_c_type());
         ctx.push_main(" ");
         ctx.push_main(&result_variable);
@@ -94,22 +94,22 @@ impl NameResolutionPass for IfExpression {
 }
 
 impl IfExpression {
-    pub fn infer_type(&self, scope: &Scope) -> Result<Type, String> {
+    pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
         let positive = match self.positive.as_ref() {
-            ExpressionOrBlock::Expression(expr) => expr.infer_type(scope)?,
+            ExpressionOrBlock::Expression(expr) => expr.infer_type(ctx)?,
             ExpressionOrBlock::Block(block) => block
                 .last_expression
                 .as_ref()
-                .map(|expr| expr.infer_type(scope))
+                .map(|expr| expr.infer_type(ctx))
                 .transpose()?
                 .unwrap_or(Type::UNIT),
         };
         let negative = match self.negative.as_deref() {
-            Some(ExpressionOrBlock::Expression(expr)) => expr.infer_type(scope)?,
+            Some(ExpressionOrBlock::Expression(expr)) => expr.infer_type(ctx)?,
             Some(ExpressionOrBlock::Block(block)) => block
                 .last_expression
                 .as_ref()
-                .map(|expr| expr.infer_type(scope))
+                .map(|expr| expr.infer_type(ctx))
                 .transpose()?
                 .unwrap_or(Type::UNIT),
             None => Type::UNIT,
