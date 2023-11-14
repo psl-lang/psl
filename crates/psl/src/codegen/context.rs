@@ -1,19 +1,25 @@
-use std::hash::Hash;
+use std::{
+    cell::{Ref, RefCell},
+    hash::Hash,
+    rc::Rc,
+};
 
 use super::{construct::Scope, pass::NamesResolved};
 
 pub struct CodegenContext {
-    name_resolution: NamesResolved,
+    name_resolution: Rc<RefCell<NamesResolved>>,
 }
 
 impl CodegenContext {
-    pub fn new(resolution: NamesResolved) -> CodegenContext {
+    pub fn new(resolution: Rc<RefCell<NamesResolved>>) -> CodegenContext {
         CodegenContext {
             name_resolution: resolution,
         }
     }
 
-    pub fn scope<T: Hash + 'static>(&self, node: &T) -> &Scope {
-        self.name_resolution.get(node).unwrap()
+    pub fn scope<T: Hash + 'static>(&self, node: &T) -> Ref<Scope> {
+        Ref::map(self.name_resolution.borrow(), |root| {
+            root.get(node).unwrap()
+        })
     }
 }
