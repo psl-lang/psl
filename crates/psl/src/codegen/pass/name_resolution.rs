@@ -28,7 +28,8 @@ impl<T: NameResolutionPass> NameResolutionPass for Option<T> {
 type AstKey = (TypeId, u64);
 
 pub struct NamesResolved {
-    resolved: HashMap<AstKey, Rc<RefCell<Scope>>>,
+    vec: Vec<Scope>,
+    resolved: HashMap<AstKey, usize>,
 }
 
 impl NamesResolved {
@@ -42,46 +43,60 @@ impl NamesResolved {
         (ty, hash)
     }
 
-    pub fn get<K: Hash + 'static>(&self, key: &K) -> Option<&Rc<RefCell<Scope>>> {
-        self.resolved.get(&Self::make_keys(key))
+    pub fn insert(&mut self, scope: Scope) -> usize {
+        self.vec.push(scope);
+        self.vec.len() - 1
     }
 
-    pub fn set<K: Hash + 'static>(&mut self, key: &K, scope: Rc<RefCell<Scope>>) {
-        self.resolved.insert(Self::make_keys(key), scope);
+    pub fn get<K: Hash + 'static>(&self, key: &K) -> Option<&Scope> {
+        self.resolved
+            .get(&Self::make_keys(key))
+            .and_then(|idx| self.vec.get(*idx))
+    }
+
+    pub fn set<K: Hash + 'static>(&mut self, key: &K, idx: usize) {
+        self.resolved.insert(Self::make_keys(key), idx);
     }
 }
 
 pub struct NameResolutionContext {
     // as we use single-threaded codegen, there must be no more than 1 mutator.
     root: Rc<RefCell<NamesResolved>>,
-    scope: Rc<RefCell<Scope>>,
+    scope: usize,
 }
 
 impl NameResolutionContext {
     pub fn new() -> Self {
-        NameResolutionContext {
-            root: Rc::new(RefCell::new(NamesResolved {
-                resolved: HashMap::new(),
-            })),
-            scope: Rc::new(RefCell::new(Scope::new())),
-        }
+        let root = Rc::new(RefCell::new(NamesResolved {
+            vec: Vec::new(),
+            resolved: HashMap::new(),
+        }));
+        let scope = root.borrow_mut().insert(Scope::new(Rc::clone(&root)));
+
+        NameResolutionContext { root, scope }
     }
 
     pub fn visit<T: NameResolutionPass + Hash + 'static>(&mut self, node: &T) {
-        self.root.borrow_mut().set(node, Rc::clone(&self.scope));
+        self.root.borrow_mut().set(node, self.scope);
 
         node.resolve(self);
     }
 
     pub fn create_subscope(&mut self) -> NameResolutionContext {
+        let new_scope = self
+            .root
+            .borrow_mut()
+            .insert(Scope::with_parentt(Rc::clone(&self.root), self.scope));
         NameResolutionContext {
             root: Rc::clone(&self.root),
-            scope: Rc::new(RefCell::new(Scope::create_subscope(Rc::clone(&self.scope)))),
+            scope: new_scope,
         }
     }
 
     pub fn scope_mut(&mut self) -> RefMut<Scope> {
-        self.scope.borrow_mut()
+        RefMut::map(self.root.borrow_mut(), |root| {
+            root.vec.get_mut(self.scope).unwrap()
+        })
     }
 
     pub fn finish(self) -> NamesResolved {

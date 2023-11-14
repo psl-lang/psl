@@ -1,4 +1,4 @@
-use std::{cell::Ref, hash::Hash};
+use std::hash::Hash;
 
 use super::{construct::Scope, pass::NamesResolved};
 
@@ -13,7 +13,7 @@ impl CodegenContext {
         }
     }
 
-    pub fn scope<T: Hash + 'static>(&self, node: &T) -> Ref<Scope> {
-        self.name_resolution.get(node).unwrap().borrow()
+    pub fn scope<T: Hash + 'static>(&self, node: &T) -> &Scope {
+        self.name_resolution.get(node).unwrap()
     }
 }
