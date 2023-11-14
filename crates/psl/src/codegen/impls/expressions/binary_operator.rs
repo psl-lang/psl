@@ -1,22 +1,27 @@
 use crate::{
     ast::{BinaryOperator, BinaryOperatorExpression},
-    codegen::{construct::Type, context::CodegenContext, scope::Scope, visitor::CodegenNode},
+    codegen::{
+        construct::{Scope, Type},
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 impl CodegenNode for BinaryOperatorExpression {
-    fn produce_code(self, ctx: &mut CodegenContext, scope: &mut Scope) -> String {
+    fn produce_code(self, ctx: &mut CodegenContext) -> String {
         if matches!(
             self.operator,
             BinaryOperator::LogiacalAnd | BinaryOperator::LogicalOr
         ) {
             let mut lhs = String::new();
             let output_name = ctx.generate_random_name();
-            let ty = self.lhs.infer_type(ctx, scope).unwrap().as_c_type();
+            let ty = self.lhs.infer_type(&ctx.scope(&self)).unwrap().as_c_type();
             lhs.push_str(&format!(
                 "{} {} = {};\n",
                 ty,
                 &output_name,
-                self.lhs.produce_code(ctx, scope)
+                ctx.visit(self.lhs)
             ));
 
             let should_negate = self.operator == BinaryOperator::LogicalOr;
@@ -29,7 +34,7 @@ impl CodegenNode for BinaryOperatorExpression {
                 &output_name,
             ));
 
-            let rhs = self.rhs.produce_code(ctx, scope);
+            let rhs = ctx.visit(self.rhs);
             ctx.push_main(&format!("{} = {};\n", &output_name, rhs));
 
             ctx.push_main("}\n");
@@ -39,7 +44,7 @@ impl CodegenNode for BinaryOperatorExpression {
 
         let mut output = String::new();
         output.push('(');
-        output.push_str(&self.lhs.produce_code(ctx, scope));
+        output.push_str(&ctx.visit(self.lhs));
         output.push(')');
 
         /*
@@ -64,10 +69,17 @@ impl CodegenNode for BinaryOperatorExpression {
         output.push_str(operator);
 
         output.push('(');
-        output.push_str(&self.rhs.produce_code(ctx, scope));
+        output.push_str(&ctx.visit(self.rhs));
         output.push(')');
 
         output
+    }
+}
+
+impl NameResolutionPass for BinaryOperatorExpression {
+    fn resolve(&self, ctx: &mut NameResolutionContext) {
+        ctx.visit(&self.lhs);
+        ctx.visit(&self.rhs);
     }
 }
 
@@ -76,13 +88,13 @@ impl BinaryOperatorExpression {
      * @TODO:
      * when we introduce operator overloading, we should change this.
      */
-    pub fn infer_type(&self, ctx: &CodegenContext, scope: &mut Scope) -> Result<Type, String> {
+    pub fn infer_type(&self, scope: &Scope) -> Result<Type, String> {
         match self.operator {
             BinaryOperator::Add
             | BinaryOperator::Subtract
             | BinaryOperator::Multiply
             | BinaryOperator::Divide
-            | BinaryOperator::Modulus => self.lhs.infer_type(ctx, scope),
+            | BinaryOperator::Modulus => self.lhs.infer_type(scope),
 
             BinaryOperator::Equal
             | BinaryOperator::NotEqual

@@ -1,11 +1,15 @@
 use crate::{
     ast::WriteStatement,
-    codegen::{context::CodegenContext, scope::Scope, visitor::CodegenNode},
+    codegen::{
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 impl CodegenNode for WriteStatement {
-    fn produce_code(self, ctx: &mut CodegenContext, scope: &mut Scope) -> String {
-        let Some(ty) = scope.get_variable_type(&self.name.name.content) else {
+    fn produce_code(self, ctx: &mut CodegenContext) -> String {
+        let Some(ty) = ctx.scope(&self).get_variable_type(&self.name.name.content) else {
             // @TODO: migrate to diagnostics
             panic!("There is no variable named {:?}", self.name.name.content);
         };
@@ -18,4 +22,8 @@ impl CodegenNode for WriteStatement {
 
         "".to_owned()
     }
+}
+
+impl NameResolutionPass for WriteStatement {
+    fn resolve(&self, _ctx: &mut NameResolutionContext) {}
 }

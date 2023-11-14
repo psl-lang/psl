@@ -5,7 +5,7 @@ pub enum Type {
     Simple(Token),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Hash, PartialEq)]
 pub struct Block {
     pub statements: Vec<Statement>,
     pub last_expression: Option<Box<Expression>>,

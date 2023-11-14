@@ -1,10 +1,15 @@
 use crate::{
     ast::ReadExpression,
-    codegen::{construct::Type, context::CodegenContext, scope::Scope, visitor::CodegenNode},
+    codegen::{
+        construct::{Scope, Type},
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 impl CodegenNode for ReadExpression {
-    fn produce_code(self, _ctx: &mut CodegenContext, scope: &mut Scope) -> String {
+    fn produce_code(self, _ctx: &mut CodegenContext) -> String {
         match self {
             ReadExpression::Type(ty) => {
                 let ty = Type::try_from(ty).unwrap();
@@ -14,8 +19,12 @@ impl CodegenNode for ReadExpression {
     }
 }
 
+impl NameResolutionPass for ReadExpression {
+    fn resolve(&self, _ctx: &mut NameResolutionContext) {}
+}
+
 impl ReadExpression {
-    pub fn infer_type(&self, _ctx: &CodegenContext, scope: &mut Scope) -> Result<Type, String> {
+    pub fn infer_type(&self, _scope: &Scope) -> Result<Type, String> {
         match self {
             ReadExpression::Type(ty) => ty.clone().try_into(),
         }

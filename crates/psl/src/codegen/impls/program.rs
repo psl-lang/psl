@@ -1,6 +1,10 @@
 use crate::{
     ast::Program,
-    codegen::{context::CodegenContext, scope::Scope, visitor::CodegenNode},
+    codegen::{
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 macro_rules! include_rt {
@@ -13,8 +17,18 @@ macro_rules! include_rt {
     };
 }
 
+fn remove_c_preprocessor_codes(s: impl AsRef<str>) -> String {
+    s.as_ref()
+        .split('\n')
+        .filter(|s| !s.is_empty() && &s[0..1] != "#") // do not support C preprocessor at all
+        .collect::<Vec<_>>()
+        .join("\n")
+        .trim()
+        .to_owned()
+}
+
 impl CodegenNode for Program {
-    fn produce_code(self, ctx: &mut CodegenContext, scope: &mut Scope) -> String {
+    fn produce_code(self, ctx: &mut CodegenContext) -> String {
         ctx.push_header(
             &include_str!("../rt/header.h")
                 .replace("{{CARGO_PKG_VERSION}}", env!("CARGO_PKG_VERSION")),
@@ -34,7 +48,7 @@ impl CodegenNode for Program {
         ctx.push_header("c8 write_buf[WRITE_BUF_LEN];\n");
 
         for item in self.items {
-            let output = item.produce_code(ctx, scope);
+            let output = ctx.visit(item);
             ctx.push_main(&output);
         }
 
@@ -46,12 +60,10 @@ impl CodegenNode for Program {
     }
 }
 
-fn remove_c_preprocessor_codes(s: impl AsRef<str>) -> String {
-    s.as_ref()
-        .split('\n')
-        .filter(|s| !s.is_empty() && &s[0..1] != "#") // do not support C preprocessor at all
-        .collect::<Vec<_>>()
-        .join("\n")
-        .trim()
-        .to_owned()
+impl NameResolutionPass for Program {
+    fn resolve(&self, ctx: &mut NameResolutionContext) {
+        for item in &self.items {
+            ctx.visit(item)
+        }
+    }
 }

@@ -1,13 +1,16 @@
 use crate::{
     ast::VariableDeclaration,
-    codegen::{construct::Type, context::CodegenContext, scope::Scope, visitor::CodegenNode},
+    codegen::{
+        construct::Type,
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 impl CodegenNode for VariableDeclaration {
-    fn produce_code(self, ctx: &mut CodegenContext, scope: &mut Scope) -> String {
+    fn produce_code(self, ctx: &mut CodegenContext) -> String {
         let ty = Type::try_from(self.ty).unwrap();
-        scope.add_variable(self.name.content.clone(), ty.clone());
-
         let mut output = String::new();
 
         output.push_str(&ty.as_c_type());
@@ -16,7 +19,7 @@ impl CodegenNode for VariableDeclaration {
 
         if let Some(node) = self.value {
             output.push('=');
-            output.push_str(&node.produce_code(ctx, scope))
+            output.push_str(&ctx.visit(node))
         }
 
         output.push_str(";\n");
@@ -24,5 +27,13 @@ impl CodegenNode for VariableDeclaration {
         ctx.push_main(&output);
 
         "".to_owned()
+    }
+}
+
+impl NameResolutionPass for VariableDeclaration {
+    fn resolve(&self, ctx: &mut NameResolutionContext) {
+        let ty = Type::try_from(self.ty.clone()).unwrap();
+        ctx.scope_mut().put_variable(self.name.content.clone(), ty);
+        ctx.visit(&self.value);
     }
 }

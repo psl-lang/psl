@@ -1,4 +1,9 @@
+use std::{cell::Ref, fmt::Debug, hash::Hash};
+
+use super::{construct::Scope, pass::NamesResolved};
+
 pub struct CodegenContext {
+    name_resolution: NamesResolved,
     random_index: u64,
 
     header: String,
@@ -6,21 +11,24 @@ pub struct CodegenContext {
     footer: String,
 }
 
-impl Default for CodegenContext {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl CodegenContext {
-    pub fn new() -> CodegenContext {
+    pub fn new(resolution: NamesResolved) -> CodegenContext {
         CodegenContext {
+            name_resolution: resolution,
+
             random_index: 0,
 
             header: String::new(),
             main: String::new(),
             footer: String::new(),
         }
+    }
+
+    pub fn scope<T: Debug + Hash + 'static>(&self, node: &T) -> Ref<Scope> {
+        self.name_resolution
+            .get(node)
+            .expect(&format!("{:#?} has no scope", &node))
+            .borrow()
     }
 
     pub fn generate_random_name(&mut self) -> String {
