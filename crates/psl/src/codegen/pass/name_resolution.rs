@@ -12,6 +12,19 @@ pub trait NameResolutionPass {
     fn resolve(&self, ctx: &mut NameResolutionContext);
 }
 
+impl<T: NameResolutionPass> NameResolutionPass for Box<T> {
+    fn resolve(&self, ctx: &mut NameResolutionContext) {
+        T::resolve(&self, ctx)
+    }
+}
+
+impl<T: NameResolutionPass> NameResolutionPass for Option<T> {
+    fn resolve(&self, ctx: &mut NameResolutionContext) {
+        let Some(value) = self else { return };
+        T::resolve(value, ctx)
+    }
+}
+
 type AstKey = (TypeId, u64);
 
 pub struct NamesResolved {

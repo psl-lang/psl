@@ -32,5 +32,6 @@ impl NameResolutionPass for VariableDeclaration {
     fn resolve(&self, ctx: &mut NameResolutionContext) {
         let ty = Type::try_from(self.ty.clone()).unwrap();
         ctx.scope_mut().put_variable(self.name.content.clone(), ty);
+        ctx.visit(&self.value);
     }
 }

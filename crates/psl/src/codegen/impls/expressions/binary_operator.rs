@@ -46,5 +46,8 @@ impl CodegenNode for BinaryOperatorExpression {
 }
 
 impl NameResolutionPass for BinaryOperatorExpression {
-    fn resolve(&self, _ctx: &mut NameResolutionContext) {}
+    fn resolve(&self, ctx: &mut NameResolutionContext) {
+        ctx.visit(&self.lhs);
+        ctx.visit(&self.rhs);
+    }
 }

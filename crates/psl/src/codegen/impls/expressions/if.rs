@@ -25,7 +25,11 @@ impl CodegenNode for IfExpression {
 }
 
 impl NameResolutionPass for IfExpression {
-    fn resolve(&self, _ctx: &mut NameResolutionContext) {}
+    fn resolve(&self, ctx: &mut NameResolutionContext) {
+        ctx.visit(&self.condition);
+        ctx.visit(&self.positive);
+        ctx.visit(&self.negative);
+    }
 }
 
 impl IfExpression {
