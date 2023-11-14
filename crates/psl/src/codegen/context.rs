@@ -1,4 +1,4 @@
-use std::{cell::Ref, fmt::Debug, hash::Hash};
+use std::hash::Hash;
 
 use super::{construct::Scope, pass::NamesResolved};
 
@@ -24,11 +24,8 @@ impl CodegenContext {
         }
     }
 
-    pub fn scope<T: Debug + Hash + 'static>(&self, node: &T) -> Ref<Scope> {
-        self.name_resolution
-            .get(node)
-            .expect(&format!("{:#?} has no scope", &node))
-            .borrow()
+    pub fn scope<T: Hash + 'static>(&self, node: &T) -> &Scope {
+        self.name_resolution.get(node).unwrap()
     }
 
     pub fn generate_random_name(&mut self) -> String {

@@ -1,25 +1,30 @@
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
+use crate::codegen::pass::NamesResolved;
+
 use super::Type;
 
 pub struct Scope {
-    parent: Option<Rc<RefCell<Scope>>>,
+    root: Rc<RefCell<NamesResolved>>,
+
+    parent: Option<usize>,
 
     variable_names: HashMap<String, Type>,
 }
 
 impl Scope {
-    pub fn new() -> Scope {
+    pub fn new(root: Rc<RefCell<NamesResolved>>) -> Scope {
         Scope {
+            root,
             parent: None,
-
             variable_names: HashMap::new(),
         }
     }
 
-    pub fn create_subscope(scope: Rc<RefCell<Scope>>) -> Scope {
+    pub fn with_parentt(root: Rc<RefCell<NamesResolved>>, parent: usize) -> Scope {
         Scope {
-            parent: Some(scope.clone()),
+            root,
+            parent: Some(parent),
 
             variable_names: HashMap::new(),
         }
@@ -31,15 +36,12 @@ impl Scope {
 
     pub fn get_variable_type(&self, name: &String) -> Option<Type> {
         self.variable_names.get(name).cloned().or_else(|| {
-            self.parent
-                .as_deref()
-                .and_then(|parent| parent.borrow().get_variable_type(name))
+            self.parent.and_then(|parent| {
+                self.root
+                    .borrow()
+                    .get(&parent)
+                    .and_then(|parent| parent.get_variable_type(name))
+            })
         })
-    }
-}
-
-impl Default for Scope {
-    fn default() -> Self {
-        Scope::new()
     }
 }
