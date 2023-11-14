@@ -100,8 +100,8 @@ impl NameResolutionContext {
         })
     }
 
-    pub fn finish(self) -> NamesResolved {
-        Rc::into_inner(self.root).unwrap().into_inner()
+    pub fn finish(self) -> Rc<RefCell<NamesResolved>> {
+        self.root
     }
 }
 

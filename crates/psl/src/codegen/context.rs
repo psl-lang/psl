@@ -1,9 +1,13 @@
-use std::hash::Hash;
+use std::{
+    cell::{Ref, RefCell},
+    hash::Hash,
+    rc::Rc,
+};
 
 use super::{construct::Scope, pass::NamesResolved};
 
 pub struct CodegenContext {
-    name_resolution: NamesResolved,
+    name_resolution: Rc<RefCell<NamesResolved>>,
     random_index: u64,
 
     header: String,
@@ -12,7 +16,7 @@ pub struct CodegenContext {
 }
 
 impl CodegenContext {
-    pub fn new(resolution: NamesResolved) -> CodegenContext {
+    pub fn new(resolution: Rc<RefCell<NamesResolved>>) -> CodegenContext {
         CodegenContext {
             name_resolution: resolution,
 
@@ -24,8 +28,10 @@ impl CodegenContext {
         }
     }
 
-    pub fn scope<T: Hash + 'static>(&self, node: &T) -> &Scope {
-        self.name_resolution.get(node).unwrap()
+    pub fn scope<T: Hash + 'static>(&self, node: &T) -> Ref<Scope> {
+        Ref::map(self.name_resolution.borrow(), |root| {
+            root.get(node).unwrap()
+        })
     }
 
     pub fn generate_random_name(&mut self) -> String {
