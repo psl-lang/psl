@@ -1,6 +1,11 @@
 use crate::{
     ast::ReadExpression,
-    codegen::{construct::Type, context::CodegenContext, visitor::CodegenNode},
+    codegen::{
+        construct::Type,
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 impl CodegenNode for ReadExpression {
@@ -12,6 +17,10 @@ impl CodegenNode for ReadExpression {
             }
         }
     }
+}
+
+impl NameResolutionPass for ReadExpression {
+    fn resolve(&self, _ctx: &mut NameResolutionContext) {}
 }
 
 impl ReadExpression {

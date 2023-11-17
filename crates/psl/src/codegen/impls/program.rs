@@ -1,6 +1,10 @@
 use crate::{
     ast::Program,
-    codegen::{context::CodegenContext, visitor::CodegenNode},
+    codegen::{
+        context::CodegenContext,
+        pass::{NameResolutionContext, NameResolutionPass},
+        visitor::CodegenNode,
+    },
 };
 
 macro_rules! include_rt {
@@ -11,6 +15,16 @@ macro_rules! include_rt {
         ))));
         $output.push_str("\n\n")
     };
+}
+
+fn remove_c_preprocessor_codes(s: impl AsRef<str>) -> String {
+    s.as_ref()
+        .split('\n')
+        .filter(|s| !s.is_empty() && &s[0..1] != "#") // do not support C preprocessor at all
+        .collect::<Vec<_>>()
+        .join("\n")
+        .trim()
+        .to_owned()
 }
 
 impl CodegenNode for Program {
@@ -46,12 +60,10 @@ impl CodegenNode for Program {
     }
 }
 
-fn remove_c_preprocessor_codes(s: impl AsRef<str>) -> String {
-    s.as_ref()
-        .split('\n')
-        .filter(|s| !s.is_empty() && &s[0..1] != "#") // do not support C preprocessor at all
-        .collect::<Vec<_>>()
-        .join("\n")
-        .trim()
-        .to_owned()
+impl NameResolutionPass for Program {
+    fn resolve(&self, ctx: &mut NameResolutionContext) {
+        for item in &self.items {
+            ctx.visit(item)
+        }
+    }
 }

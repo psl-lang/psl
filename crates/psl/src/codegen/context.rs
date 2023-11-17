@@ -1,29 +1,25 @@
-use std::collections::HashMap;
+use std::{
+    cell::{Ref, RefCell},
+    hash::Hash,
+    rc::Rc,
+};
 
-use super::construct::Type;
+use super::{construct::Scope, pass::NamesResolved};
 
 pub struct CodegenContext {
-    variable_names: HashMap<String, Type>,
-}
-
-impl Default for CodegenContext {
-    fn default() -> Self {
-        Self::new()
-    }
+    name_resolution: Rc<RefCell<NamesResolved>>,
 }
 
 impl CodegenContext {
-    pub fn new() -> CodegenContext {
+    pub fn new(resolution: Rc<RefCell<NamesResolved>>) -> CodegenContext {
         CodegenContext {
-            variable_names: HashMap::new(),
+            name_resolution: resolution,
         }
     }
 
-    pub fn add_variable(&mut self, name: String, ty: Type) {
-        self.variable_names.insert(name, ty);
-    }
-
-    pub fn get_variable_type(&self, name: &String) -> Option<&Type> {
-        self.variable_names.get(name)
+    pub fn scope<T: Hash + 'static>(&self, node: &T) -> Ref<Scope> {
+        Ref::map(self.name_resolution.borrow(), |root| {
+            root.get(node).unwrap()
+        })
     }
 }
