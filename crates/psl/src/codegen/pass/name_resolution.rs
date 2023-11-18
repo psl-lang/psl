@@ -14,7 +14,7 @@ pub trait NameResolutionPass {
 
 impl<T: NameResolutionPass> NameResolutionPass for Box<T> {
     fn resolve(&self, ctx: &mut NameResolutionContext) {
-        T::resolve(&self, ctx)
+        T::resolve(self, ctx)
     }
 }
 
