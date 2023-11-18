@@ -24,8 +24,7 @@ impl CodegenNode for IfExpression {
                             Some(last_expr) => block_output.push_str(&ctx.visit(last_expr)),
                             None => block_output.push_str("tuple0 {}"),
                         }
-                        block_output.push(';');
-                        block_output.push_str("}\n");
+                        block_output.push_str(";\n}");
                         block_output
                     }
                 }
