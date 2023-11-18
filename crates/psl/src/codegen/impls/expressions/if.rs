@@ -1,7 +1,7 @@
 use crate::{
     ast::IfExpression,
     codegen::{
-        construct::{Scope, Type},
+        construct::Type,
         context::CodegenContext,
         pass::{NameResolutionContext, NameResolutionPass},
         visitor::CodegenNode,
