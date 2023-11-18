@@ -1,7 +1,7 @@
 mod write;
 
 use winnow::{
-    combinator::{alt, terminated},
+    combinator::{alt, opt, terminated},
     Located, PResult, Parser,
 };
 
@@ -18,7 +18,7 @@ pub fn parse_statement(s: &mut Located<&str>) -> PResult<Statement> {
     alt((
         parse_declaration.map(Statement::Declaration),
         parse_write.map(Statement::Write),
-        terminated(parse_expression, parse_separator).map(Statement::Expression),
+        terminated(parse_expression, opt(parse_separator)).map(Statement::Expression),
     ))
     .parse_next(s)
 }
