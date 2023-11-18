@@ -1,22 +1,46 @@
-use winnow::{combinator::preceded, Located, PResult, Parser};
+use winnow::{
+    combinator::{alt, opt, preceded},
+    Located, PResult, Parser,
+};
 
-use crate::ast::{IfExpression, TokenKind};
+use crate::{
+    ast::{ExpressionOrBlock, IfExpression, TokenKind},
+    syntax::fragments::block::parse_block,
+};
 
 use super::parse_expression;
 
 pub fn parse_if(s: &mut Located<&str>) -> PResult<IfExpression> {
     (
         TokenKind::KeywordIf,
-        preceded(TokenKind::WhitespaceHorizontal, parse_expression),
-        preceded(TokenKind::WhitespaceHorizontal, TokenKind::KeywordThen),
-        preceded(TokenKind::WhitespaceHorizontal, parse_expression),
-        preceded(TokenKind::WhitespaceHorizontal, TokenKind::KeywordElse),
-        preceded(TokenKind::WhitespaceHorizontal, parse_expression),
+        preceded(TokenKind::WhitespaceHorizontal, parse_expression).map(Box::new),
+        alt((
+            preceded(
+                (
+                    TokenKind::WhitespaceHorizontal,
+                    TokenKind::KeywordThen,
+                    TokenKind::WhitespaceHorizontal,
+                ),
+                parse_expression,
+            )
+            .map(|expr| Box::new(ExpressionOrBlock::Expression(expr))),
+            preceded(TokenKind::WhitespaceHorizontal, parse_block)
+                .map(|block| Box::new(ExpressionOrBlock::Block(block))),
+        )),
+        opt((
+            preceded(TokenKind::WhitespaceHorizontal, TokenKind::KeywordElse),
+            alt((
+                preceded(TokenKind::WhitespaceHorizontal, parse_expression)
+                    .map(|expr| Box::new(ExpressionOrBlock::Expression(expr))),
+                preceded(TokenKind::WhitespaceHorizontal, parse_block)
+                    .map(|block| Box::new(ExpressionOrBlock::Block(block))),
+            )),
+        )),
     )
-        .map(|(_, condition, _, positive, _, negative)| IfExpression {
-            condition: condition.into(),
-            positive: positive.into(),
-            negative: negative.into(),
+        .map(|(_, condition, positive, negative)| IfExpression {
+            condition,
+            positive,
+            negative: negative.map(|(_, negative)| negative),
         })
         .parse_next(s)
 }

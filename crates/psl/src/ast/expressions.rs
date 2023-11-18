@@ -1,4 +1,4 @@
-use super::{Token, Type};
+use super::{ExpressionOrBlock, Token, Type};
 
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub enum Expression {
@@ -21,8 +21,8 @@ pub struct NameExpression {
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub struct IfExpression {
     pub condition: Box<Expression>,
-    pub positive: Box<Expression>,
-    pub negative: Box<Expression>,
+    pub positive: Box<ExpressionOrBlock>,
+    pub negative: Option<Box<ExpressionOrBlock>>,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq)]
