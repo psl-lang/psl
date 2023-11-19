@@ -14,27 +14,12 @@ pub fn parse_if(s: &mut Located<&str>) -> PResult<IfExpression> {
     (
         TokenKind::KeywordIf,
         preceded(TokenKind::WhitespaceHorizontal, parse_expression).map(Box::new),
-        alt((
-            preceded(
-                (
-                    TokenKind::WhitespaceHorizontal,
-                    TokenKind::KeywordThen,
-                    TokenKind::WhitespaceHorizontal,
-                ),
-                parse_expression,
-            )
-            .map(|expr| Box::new(ExpressionOrBlock::Expression(expr))),
-            preceded(TokenKind::WhitespaceHorizontal, parse_block)
-                .map(|block| Box::new(ExpressionOrBlock::Block(block))),
-        )),
+        preceded(TokenKind::WhitespaceHorizontal, parse_block)
+            .map(|block| Box::new(ExpressionOrBlock::Block(block))),
         opt((
             preceded(TokenKind::WhitespaceHorizontal, TokenKind::KeywordElse),
-            alt((
-                preceded(TokenKind::WhitespaceHorizontal, parse_expression)
-                    .map(|expr| Box::new(ExpressionOrBlock::Expression(expr))),
-                preceded(TokenKind::WhitespaceHorizontal, parse_block)
-                    .map(|block| Box::new(ExpressionOrBlock::Block(block))),
-            )),
+            alt((preceded(TokenKind::WhitespaceHorizontal, parse_block)
+                .map(|block| Box::new(ExpressionOrBlock::Block(block))),)),
         )),
     )
         .map(|(_, condition, positive, negative)| IfExpression {

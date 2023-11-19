@@ -10,7 +10,6 @@ pub enum TokenKind {
     KeywordRead,
     KeywordWrite,
     KeywordIf,
-    KeywordThen,
     KeywordElse,
 
     // please sort punctuation by its ascii code

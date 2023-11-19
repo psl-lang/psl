@@ -9,7 +9,6 @@ pub fn parse_keyword(s: &mut Located<&str>) -> PResult<Token> {
         tag("read").with_span().map(token(TokenKind::KeywordRead)),
         tag("write").with_span().map(token(TokenKind::KeywordWrite)),
         tag("if").with_span().map(token(TokenKind::KeywordIf)),
-        tag("then").with_span().map(token(TokenKind::KeywordThen)),
         tag("else").with_span().map(token(TokenKind::KeywordElse)),
     ))
     .parse_next(s)
