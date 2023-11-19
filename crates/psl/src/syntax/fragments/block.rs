@@ -10,13 +10,19 @@ use crate::{
 
 pub fn parse_block(s: &mut Located<&str>) -> PResult<Block> {
     delimited(
-        TokenKind::PunctuationLeftCurlyBracket,
+        (
+            TokenKind::PunctuationLeftCurlyBracket,
+            opt(TokenKind::WhitespaceHorizontal),
+        ),
         delimited(
             opt(parse_separator),
             repeat(0.., parse_statement),
             opt(parse_separator),
         ),
-        TokenKind::PunctuationRightCurlyBracket,
+        (
+            opt(TokenKind::WhitespaceHorizontal),
+            TokenKind::PunctuationRightCurlyBracket,
+        ),
     )
     .map(|statements: Vec<_>| match &statements[..] {
         [statements @ .., Statement::Expression(expr)] => Block {

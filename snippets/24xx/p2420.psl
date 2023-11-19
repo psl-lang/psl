@@ -1,4 +1,4 @@
 i32 N = read i32
 i32 M = read i32
-i32 diff = if N < M then M - N else N - M
+i32 diff = if N < M { M - N } else { N - M }
 write diff
