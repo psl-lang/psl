@@ -17,7 +17,10 @@ impl CodegenNode for IfExpression {
         output.push_str(") ? (");
         output.push_str(&ctx.visit(self.positive));
         output.push_str(") : (");
-        output.push_str(&ctx.visit(self.negative));
+        match self.negative {
+            Some(negative) => output.push_str(&ctx.visit(negative)),
+            None => output.push_str("tuple0 {}"),
+        };
         output.push(')');
 
         output
@@ -27,15 +30,21 @@ impl CodegenNode for IfExpression {
 impl NameResolutionPass for IfExpression {
     fn resolve(&self, ctx: &mut NameResolutionContext) {
         ctx.visit(&self.condition);
-        ctx.visit(&self.positive);
-        ctx.visit(&self.negative);
+
+        ctx.create_subscope().visit(&self.positive);
+        ctx.create_subscope().visit(&self.negative);
     }
 }
 
 impl IfExpression {
     pub fn infer_type(&self, ctx: &CodegenContext) -> Result<Type, String> {
         let positive = self.positive.infer_type(ctx)?;
-        let negative = self.negative.infer_type(ctx)?;
+        let negative = self
+            .negative
+            .as_ref()
+            .map(|negative| negative.infer_type(ctx))
+            .transpose()?
+            .unwrap_or(Type::UNIT);
 
         positive.union_with(negative)
     }
