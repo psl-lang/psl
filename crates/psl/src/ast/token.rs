@@ -7,10 +7,12 @@ pub enum TokenKind {
 
     IdentifierIdentifier,
 
-    KeywordRead,
-    KeywordWrite,
-    KeywordIf,
+    // please sort keyword alphabetically
     KeywordElse,
+    KeywordIf,
+    KeywordRead,
+    KeywordWhile,
+    KeywordWrite,
 
     // please sort punctuation by its ascii code
     // please name enum variant Punctuation (PascalCase-d unicode name[1])
