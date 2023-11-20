@@ -12,9 +12,9 @@ impl CodegenNode for LiteralExpression {
     fn produce_code(self, _ctx: &mut CodegenContext) -> String {
         let digit_only = self.value.content.replace('_', "");
         match self.value.kind {
-            TokenKind::LiteralDecimal => digit_only,
-            TokenKind::LiteralHexadecimal => format!("0x{digit_only}"),
-            TokenKind::LiteralBinary => {
+            TokenKind::LiteralIntegerDecimal => digit_only,
+            TokenKind::LiteralIntegerHexadecimal => format!("0x{digit_only}"),
+            TokenKind::LiteralIntegerBinary => {
                 let mut binary = String::from("0x");
                 let mut buffer = 0;
                 let mut nibble_len = digit_only.chars().count() % 4;
@@ -43,7 +43,15 @@ impl NameResolutionPass for LiteralExpression {
 
 impl LiteralExpression {
     pub fn infer_type(&self, _ctx: &CodegenContext) -> Result<Type, String> {
-        Ok(Type::Integer)
+        match &self.value.kind {
+            TokenKind::LiteralIntegerDecimal
+            | TokenKind::LiteralIntegerHexadecimal
+            | TokenKind::LiteralIntegerBinary => Ok(Type::Integer),
+            _ => unreachable!(
+                "Invalid TokenKind for LiteralExpression: {:?}",
+                self.value.kind
+            ),
+        }
     }
 }
 

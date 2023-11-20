@@ -20,7 +20,7 @@ pub fn parse_decimal(s: &mut Located<&str>) -> PResult<Token> {
     take_while(1.., ('0'..='9', '_'))
         .verify(|s: &str| s.chars().any(|c| c != '_'))
         .with_span()
-        .map(token(TokenKind::LiteralDecimal))
+        .map(token(TokenKind::LiteralIntegerDecimal))
         .parse_next(s)
 }
 
@@ -31,7 +31,7 @@ pub fn parse_hexadecimal(s: &mut Located<&str>) -> PResult<Token> {
     )
     .verify(|s: &str| s.chars().any(|c| c != '_'))
     .with_span()
-    .map(token(TokenKind::LiteralHexadecimal))
+    .map(token(TokenKind::LiteralIntegerHexadecimal))
     .parse_next(s)
 }
 
@@ -39,6 +39,6 @@ pub fn parse_binary(s: &mut Located<&str>) -> PResult<Token> {
     preceded("0b", take_while(1.., ('0'..='1', '_')))
         .verify(|s: &str| s.chars().any(|c| c != '_'))
         .with_span()
-        .map(token(TokenKind::LiteralBinary))
+        .map(token(TokenKind::LiteralIntegerBinary))
         .parse_next(s)
 }

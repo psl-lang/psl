@@ -7,9 +7,9 @@ pub enum TokenKind {
 
     IdentifierIdentifier,
 
-    LiteralDecimal,
-    LiteralHexadecimal,
-    LiteralBinary,
+    LiteralIntegerDecimal,
+    LiteralIntegerHexadecimal,
+    LiteralIntegerBinary,
 
     KeywordRead,
     KeywordWrite,
