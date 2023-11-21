@@ -1,3 +1,4 @@
+mod r#while;
 mod write;
 
 use crate::{
@@ -13,6 +14,7 @@ impl CodegenNode for Statement {
         match self {
             Statement::Declaration(node) => ctx.visit(node),
             Statement::Write(node) => ctx.visit(node),
+            Statement::While(node) => ctx.visit(node),
             Statement::Expression(node) => format!("{};", ctx.visit(node)),
         }
     }
@@ -23,6 +25,7 @@ impl NameResolutionPass for Statement {
         match self {
             Statement::Declaration(node) => ctx.visit(node),
             Statement::Write(node) => ctx.visit(node),
+            Statement::While(node) => ctx.visit(node),
             Statement::Expression(node) => ctx.visit(node),
         }
     }
