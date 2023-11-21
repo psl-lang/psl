@@ -7,6 +7,10 @@ pub enum TokenKind {
 
     IdentifierIdentifier,
 
+    LiteralIntegerDecimal,
+    LiteralIntegerHexadecimal,
+    LiteralIntegerBinary,
+
     // please sort keyword alphabetically
     KeywordElse,
     KeywordIf,

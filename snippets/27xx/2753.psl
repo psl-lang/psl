@@ -1,0 +1,16 @@
+i32 year = read i32
+i32 is_leap = if year % 4 == 0 {
+    if year % 400 == 0 {
+        1
+    } else {
+        if year % 100 == 0 {
+            0
+        } else {
+            1
+        }
+    }
+} else {
+    0
+}
+
+write is_leap

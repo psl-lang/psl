@@ -2,10 +2,16 @@ use super::{ExpressionOrBlock, Token, Type};
 
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub enum Expression {
+    Literal(LiteralExpression),
     Read(ReadExpression),
     Name(NameExpression),
     If(IfExpression),
     BinaryOperator(BinaryOperatorExpression),
+}
+
+#[derive(Clone, Debug, Hash, PartialEq)]
+pub struct LiteralExpression {
+    pub value: Token,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq)]
