@@ -17,7 +17,7 @@ pub fn parse_while(s: &mut Located<&str>) -> PResult<WhileStatement> {
         opt(TokenKind::WhitespaceHorizontal),
         cut_err(parse_expression),
         opt(TokenKind::WhitespaceHorizontal),
-        parse_block,
+        cut_err(parse_block),
         parse_separator,
     )
         .map(|(_, _, condition, _, block, _)| WhileStatement { condition, block })

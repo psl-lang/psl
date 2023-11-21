@@ -1,3 +1,4 @@
+mod assignment;
 mod r#while;
 mod write;
 
@@ -15,6 +16,7 @@ impl CodegenNode for Statement {
             Statement::Declaration(node) => ctx.visit(node),
             Statement::Write(node) => ctx.visit(node),
             Statement::While(node) => ctx.visit(node),
+            Statement::CompoundAssignment(node) => ctx.visit(node),
             Statement::Expression(node) => format!("{};", ctx.visit(node)),
         }
     }
@@ -26,6 +28,7 @@ impl NameResolutionPass for Statement {
             Statement::Declaration(node) => ctx.visit(node),
             Statement::Write(node) => ctx.visit(node),
             Statement::While(node) => ctx.visit(node),
+            Statement::CompoundAssignment(node) => ctx.visit(node),
             Statement::Expression(node) => ctx.visit(node),
         }
     }

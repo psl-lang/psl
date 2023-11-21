@@ -1,0 +1,12 @@
+i32 pp = 0
+i32 p = 1
+
+i32 n = read i32
+while n > 0 {
+    i32 tmp = pp + p
+    pp = p
+    p = tmp
+    n = n - 1
+}
+
+write pp
