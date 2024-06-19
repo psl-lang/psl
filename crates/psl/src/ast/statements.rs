@@ -1,4 +1,4 @@
-use super::{Block, Declaration, Expression, NameExpression, Token};
+use super::{Block, Declaration, Expression, FormatSpecifierFragment, Token};
 
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub enum Statement {
@@ -11,7 +11,7 @@ pub enum Statement {
 
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub struct WriteStatement {
-    pub name: NameExpression,
+    pub fragments: Vec<FormatSpecifierFragment>,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq)]

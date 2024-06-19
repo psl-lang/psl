@@ -1,5 +1,6 @@
 use std::{
     cell::{Ref, RefCell},
+    fmt::Debug,
     hash::Hash,
     rc::Rc,
 };
@@ -17,9 +18,9 @@ impl CodegenContext {
         }
     }
 
-    pub fn scope<T: Hash + 'static>(&self, node: &T) -> Ref<Scope> {
+    pub fn scope<T: Hash + Debug + 'static>(&self, node: &T) -> Ref<Scope> {
         Ref::map(self.name_resolution.borrow(), |root| {
-            root.get(node).unwrap()
+            root.get(node).expect(&format!("{node:?} must have scope"))
         })
     }
 }

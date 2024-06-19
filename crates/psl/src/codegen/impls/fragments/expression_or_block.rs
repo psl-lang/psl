@@ -20,7 +20,7 @@ impl CodegenNode for ExpressionOrBlock {
                 }
                 match block.last_expression {
                     Some(last_expr) => block_output.push_str(&ctx.visit(last_expr)),
-                    None => block_output.push_str("tuple0 {}"),
+                    None => block_output.push_str("{}"),
                 }
                 block_output.push_str(";\n}");
                 block_output

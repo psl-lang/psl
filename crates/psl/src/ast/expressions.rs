@@ -4,9 +4,11 @@ use super::{ExpressionOrBlock, Token, Type};
 pub enum Expression {
     Literal(LiteralExpression),
     Read(ReadExpression),
+    Return(ReturnExpression),
     Name(NameExpression),
     If(IfExpression),
     BinaryOperator(BinaryOperatorExpression),
+    PostfixOperator(PostfixOperatorExpression),
 }
 
 #[derive(Clone, Debug, Hash, PartialEq)]
@@ -17,6 +19,10 @@ pub struct LiteralExpression {
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub enum ReadExpression {
     Type(Type),
+}
+#[derive(Clone, Debug, Hash, PartialEq)]
+pub struct ReturnExpression {
+    pub value: Box<Expression>,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq)]
@@ -53,4 +59,15 @@ pub enum BinaryOperator {
     GreaterEqual,
     LogiacalAnd,
     LogicalOr,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq)]
+pub struct PostfixOperatorExpression {
+    pub expr: Box<Expression>,
+    pub operator: PostfixOperator,
+}
+#[derive(Clone, Debug, Hash, PartialEq)]
+pub enum PostfixOperator {
+    Invoke(Vec<Expression>),
+    Index(Vec<Expression>),
 }

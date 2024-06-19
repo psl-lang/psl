@@ -19,7 +19,7 @@ impl CodegenNode for IfExpression {
         output.push_str(") : (");
         match self.negative {
             Some(negative) => output.push_str(&ctx.visit(negative)),
-            None => output.push_str("tuple0 {}"),
+            None => output.push_str("{}"),
         };
         output.push(')');
 

@@ -1,7 +1,6 @@
 use unicode_ident::{is_xid_continue, is_xid_start};
 use winnow::{
-    combinator::alt,
-    token::{any, tag, take_until1, take_while},
+    token::{any, take_while},
     Located, PResult, Parser,
 };
 
@@ -10,18 +9,14 @@ use crate::ast::{Token, TokenKind};
 use super::token;
 
 pub fn parse_identifier_identifier(s: &mut Located<&str>) -> PResult<Token> {
-    alt((
-        (tag("`"), take_until1("`"), tag("`"))
-            .map(|(q1, content, q2)| format!("{q1}{content}{q2}")),
-        (
-            any.verify(|ch| is_xid_start(*ch)),
-            take_while(0.., |ch: char| is_xid_continue(ch)),
-        )
-            .map(|(start, cont)| format!("{start}{cont}")),
-    ))
-    .with_span()
-    .map(token(TokenKind::IdentifierIdentifier))
-    .parse_next(s)
+    (
+        any.verify(|ch| is_xid_start(*ch)),
+        take_while(0.., |ch: char| is_xid_continue(ch)),
+    )
+        .map(|(start, cont)| format!("{start}{cont}"))
+        .with_span()
+        .map(token(TokenKind::IdentifierIdentifier))
+        .parse_next(s)
 }
 
 #[cfg(test)]

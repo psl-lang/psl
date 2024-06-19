@@ -1,4 +1,7 @@
-use std::ops::Range;
+use std::{
+    fmt::{self, Write},
+    ops::Range,
+};
 
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub enum TokenKind {
@@ -10,11 +13,14 @@ pub enum TokenKind {
     LiteralIntegerDecimal,
     LiteralIntegerHexadecimal,
     LiteralIntegerBinary,
+    LiteralFormatSpecifier(FormatSpecifier),
 
     // please sort keyword alphabetically
     KeywordElse,
+    KeywordFn,
     KeywordIf,
     KeywordRead,
+    KeywordReturn,
     KeywordWhile,
     KeywordWrite,
 
@@ -60,4 +66,29 @@ pub struct Token {
     pub kind: TokenKind,
     pub content: String,
     pub span: Range<usize>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq)]
+pub struct FormatSpecifier(pub Vec<FormatSpecifierFragment>);
+
+#[derive(Clone, Debug, Hash, PartialEq)]
+pub enum FormatSpecifierFragment {
+    Text(String),
+    Whitespace(String),
+    Variable(String),
+}
+
+impl fmt::Display for FormatSpecifierFragment {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            FormatSpecifierFragment::Text(s) => s.fmt(f),
+            FormatSpecifierFragment::Whitespace(s) => s.fmt(f),
+            FormatSpecifierFragment::Variable(s) => {
+                f.write_char('{')?;
+                s.fmt(f)?;
+                f.write_char('}')?;
+                Ok(())
+            }
+        }
+    }
 }

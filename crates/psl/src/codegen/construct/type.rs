@@ -1,4 +1,4 @@
-use std::fmt;
+use std::fmt::{self, Write};
 
 use crate::ast;
 
@@ -9,6 +9,11 @@ pub enum Type {
     Integer,
     Bool,
     Tuple(Vec<Type>),
+    Function {
+        parameters: Vec<Type>,
+        returning: Box<Type>,
+    },
+    Never,
 }
 
 impl TryFrom<ast::Type> for Type {
@@ -41,6 +46,22 @@ impl fmt::Display for Type {
                     .collect::<Vec<_>>()
                     .join(", ")
             ),
+            Type::Function {
+                parameters,
+                returning,
+            } => {
+                f.write_char('(')?;
+                for (idx, param) in parameters.iter().enumerate() {
+                    if idx != 0 {
+                        f.write_str(", ")?;
+                    }
+                    param.fmt(f)?;
+                }
+                f.write_str(") -> ")?;
+                returning.fmt(f)?;
+                Ok(())
+            }
+            Type::Never => write!(f, "!"),
         }
     }
 }
@@ -55,6 +76,8 @@ impl Type {
             Type::Integer => Type::I32.as_c_type(),
             Type::Bool => "bool".to_string(),
             Type::Tuple(_) => todo!("tuple type is not supported now"),
+            Type::Function { .. } => todo!("function type is not supported now"),
+            Type::Never { .. } => todo!("never type is not supported now"),
         }
     }
 

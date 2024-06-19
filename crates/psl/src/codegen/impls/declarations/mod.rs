@@ -1,3 +1,4 @@
+mod function_declaration;
 mod variable_declaration;
 
 use crate::{
@@ -13,6 +14,7 @@ impl CodegenNode for Declaration {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
         match self {
             Declaration::Variable(node) => ctx.visit(node),
+            Declaration::Function(node) => ctx.visit(node),
         }
     }
 }
@@ -21,6 +23,7 @@ impl NameResolutionPass for Declaration {
     fn resolve(&self, ctx: &mut NameResolutionContext) {
         match self {
             Declaration::Variable(node) => ctx.visit(node),
+            Declaration::Function(node) => ctx.visit(node),
         }
     }
 }

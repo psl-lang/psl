@@ -7,12 +7,12 @@ use winnow::{
     Located, PResult, Parser,
 };
 
-use crate::ast::{Token, TokenKind};
+use crate::ast::{FormatSpecifier, FormatSpecifierFragment, Token, TokenKind};
 
 use super::token;
 
 pub fn parse_literal(s: &mut Located<&str>) -> PResult<Token> {
-    parse_integer_literal.parse_next(s)
+    alt((parse_integer_literal, parse_format_specifier)).parse_next(s)
 }
 
 pub fn parse_integer_literal(s: &mut Located<&str>) -> PResult<Token> {
@@ -52,4 +52,34 @@ where
 {
     (head, repeat(0.., preceded(take_while(0.., '_'), rest)))
         .map(|(h, t): (_, Vec<_>)| format!("{}{}", h, String::from_iter(t)))
+}
+
+pub fn parse_format_specifier(s: &mut Located<&str>) -> PResult<Token> {
+    (
+        '`',
+        repeat::<_, _, Vec<_>, _, _>(0.., parse_format_specifier_fragment),
+        '`',
+    )
+        .with_span()
+        .map(|((_, seq, _), span)| {
+            let content = format!(
+                "`{}`",
+                seq.iter().map(|frag| frag.to_string()).collect::<String>()
+            );
+            Token {
+                kind: TokenKind::LiteralFormatSpecifier(FormatSpecifier(seq)),
+                content,
+                span,
+            }
+        })
+        .parse_next(s)
+}
+
+pub fn parse_format_specifier_fragment(s: &mut Located<&str>) -> PResult<FormatSpecifierFragment> {
+    alt((
+        repeat(1.., alt((' ', "\\n".map(|_| '\n')))).map(FormatSpecifierFragment::Whitespace),
+        ('{', TokenKind::IdentifierIdentifier, '}')
+            .map(|(_, ident, _)| FormatSpecifierFragment::Variable(ident.content)),
+    ))
+    .parse_next(s)
 }

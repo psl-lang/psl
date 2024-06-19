@@ -2,7 +2,9 @@ mod binary_operator;
 mod r#if;
 mod literal;
 mod name;
+mod postfix_operator;
 mod read;
+mod r#return;
 
 use crate::{
     ast::Expression,
@@ -19,9 +21,11 @@ impl CodegenNode for Expression {
         match self {
             Expression::Literal(node) => ctx.visit(node),
             Expression::Read(node) => ctx.visit(node),
+            Expression::Return(node) => ctx.visit(node),
             Expression::Name(node) => ctx.visit(node),
             Expression::If(node) => ctx.visit(node),
             Expression::BinaryOperator(node) => ctx.visit(node),
+            Expression::PostfixOperator(node) => ctx.visit(node),
         }
     }
 }
@@ -31,9 +35,11 @@ impl NameResolutionPass for Expression {
         match self {
             Expression::Literal(node) => ctx.visit(node),
             Expression::Read(node) => ctx.visit(node),
+            Expression::Return(node) => ctx.visit(node),
             Expression::Name(node) => ctx.visit(node),
             Expression::If(node) => ctx.visit(node),
             Expression::BinaryOperator(node) => ctx.visit(node),
+            Expression::PostfixOperator(node) => ctx.visit(node),
         }
     }
 }
@@ -43,9 +49,11 @@ impl Expression {
         match self {
             Expression::Literal(expr) => expr.infer_type(ctx),
             Expression::Read(expr) => expr.infer_type(ctx),
+            Expression::Return(expr) => expr.infer_type(ctx),
             Expression::Name(expr) => expr.infer_type(ctx),
             Expression::If(expr) => expr.infer_type(ctx),
             Expression::BinaryOperator(expr) => expr.infer_type(ctx),
+            Expression::PostfixOperator(expr) => expr.infer_type(ctx),
         }
     }
 }
