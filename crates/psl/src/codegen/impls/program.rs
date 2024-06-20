@@ -29,6 +29,12 @@ fn remove_c_preprocessor_codes(s: impl AsRef<str>) -> String {
 
 impl CodegenNode for Program {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
+        let mut main_body = String::new();
+
+        for item in self.items {
+            main_body.push_str(&ctx.visit(item));
+        }
+
         let mut output = String::new();
         output.push_str(
             &include_str!("../rt/header.h")
@@ -44,17 +50,23 @@ impl CodegenNode for Program {
         include_rt!(output, "panic.h");
         include_rt!(output, "read.h");
 
+        for f in ctx.func_forward_decls() {
+            output.push_str(&f);
+        }
+
         output.push_str("int main() {}; int __libc_start_main() {\n");
         output.push_str("c8 read_buf[READ_BUF_LEN];\n");
         output.push_str("c8 write_buf[WRITE_BUF_LEN];\n");
 
-        for item in self.items {
-            output.push_str(&ctx.visit(item));
-        }
+        output.push_str(&main_body);
 
         output.push_str("__flush(write_buf);\n");
         output.push_str("_Exit(0);\n");
         output.push_str("}\n");
+
+        for f in ctx.func_decls() {
+            output.push_str(&f);
+        }
 
         output
     }

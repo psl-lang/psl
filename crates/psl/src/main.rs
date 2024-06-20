@@ -61,11 +61,15 @@ fn main() -> ExitCode {
     eprintln!("Run the program");
     eprintln!("-------------------------------------------");
 
-    Command::new(&executable_path)
+    let o = Command::new(&executable_path)
         .spawn()
         .unwrap()
         .wait_with_output()
         .unwrap();
 
-    ExitCode::SUCCESS
+    if o.status.success() {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
+    }
 }

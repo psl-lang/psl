@@ -2,7 +2,7 @@ use crate::{
     ast::{ExpressionOrBlock, FunctionDeclaration},
     codegen::{
         construct::Type,
-        context::CodegenContext,
+        context::{CodegenContext, Function},
         pass::{NameResolutionContext, NameResolutionPass},
         visitor::CodegenNode,
     },
@@ -11,47 +11,57 @@ use crate::{
 impl CodegenNode for FunctionDeclaration {
     fn produce_code(self, ctx: &mut CodegenContext) -> String {
         let return_type = Type::try_from(self.return_type).unwrap();
-        let mut output = String::new();
 
-        output.push_str(&return_type.as_c_type());
-        output.push(' ');
-        output.push_str(&self.name.content);
-        output.push('(');
+        let mut forward_decl = String::new();
+        let mut decl = String::new();
+
+        forward_decl.push_str(&return_type.as_c_type());
+        forward_decl.push(' ');
+        forward_decl.push_str(&self.name.content);
+        forward_decl.push('(');
         for (i, (param_ty, param_name)) in self.parameters.iter().enumerate() {
             if i != 0 {
-                output.push_str(", ");
+                forward_decl.push_str(", ");
             }
-            output.push_str(&Type::try_from(param_ty.clone()).unwrap().as_c_type());
-            output.push(' ');
-            output.push_str(&param_name.content);
+            forward_decl.push_str(&Type::try_from(param_ty.clone()).unwrap().as_c_type());
+            forward_decl.push(' ');
+            forward_decl.push_str(&param_name.content);
         }
-        output.push_str(") {\n");
+        forward_decl.push(')');
+
+        decl.push_str(&forward_decl);
+        decl.push_str(" {\n");
 
         match self.body {
             ExpressionOrBlock::Expression(expr) => {
-                output.push_str("return ");
-                output.push_str(&ctx.visit(expr));
-                output.push_str(";\n");
+                decl.push_str("return ");
+                decl.push_str(&ctx.visit(expr));
+                decl.push_str(";\n");
             }
             ExpressionOrBlock::Block(block) => {
                 for statement in block.statements {
-                    output.push_str(&ctx.visit(statement));
+                    decl.push_str(&ctx.visit(statement));
                 }
                 match block.last_expression {
                     Some(last_expr) => {
                         if !matches!(last_expr.infer_type(ctx).unwrap(), Type::Never) {
-                            output.push_str("return ");
+                            decl.push_str("return ");
                         }
-                        output.push_str(&ctx.visit(last_expr));
-                        output.push_str(";\n");
+                        decl.push_str(&ctx.visit(last_expr));
+                        decl.push_str(";\n");
                     }
-                    None => output.push_str("return {};\n"),
+                    None => decl.push_str("return {};\n"),
                 }
             }
         }
-        output.push('}');
+        decl.push('}');
 
-        output
+        ctx.add_function(Function {
+            forward_decl: format!("{forward_decl};"),
+            decl,
+        });
+
+        "".to_owned()
     }
 }
 

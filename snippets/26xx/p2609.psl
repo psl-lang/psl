@@ -1,3 +1,9 @@
+i32 a = read i32
+i32 b = read i32
+i32 gcd = eval_gcd(a, b)
+i32 lcm = a * b / gcd
+write `{gcd}\n{lcm}`
+
 fn eval_gcd(i32 a, i32 b) i32 {
     if a > b {
         return eval_gcd(b, a)
@@ -7,9 +13,3 @@ fn eval_gcd(i32 a, i32 b) i32 {
     }
     return eval_gcd(b % a, a)
 }
-
-i32 a = read i32
-i32 b = read i32
-i32 gcd = eval_gcd(a, b)
-i32 lcm = a * b / gcd
-write `{gcd}\n{lcm}`
