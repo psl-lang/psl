@@ -13,6 +13,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "c11-tree"
+version = "0.1.0"
+
+[[package]]
 name = "diff"
 version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -43,6 +47,22 @@ dependencies = [
  "unicode-ident",
  "winnow",
 ]
+
+[[package]]
+name = "psl-ast"
+version = "0.1.0"
+
+[[package]]
+name = "psl-codegen-c11"
+version = "0.1.0"
+
+[[package]]
+name = "psl-diagnostics"
+version = "0.1.0"
+
+[[package]]
+name = "psl-syntax"
+version = "0.1.0"
 
 [[package]]
 name = "unicode-ident"
