@@ -21,7 +21,7 @@ Not available now, sorry!
 ```sh
 cargo install \
     --git https://github.com/psl-lang/psl \
-    --tag v0.1.1
+    --tag v0.1.3
 ```
 
 > [!NOTE]
