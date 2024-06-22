@@ -1,7 +1,7 @@
 use std::{fmt::Display, ops::Range};
 
 use winnow::{
-    combinator::{alt, success},
+    combinator::{alt, empty},
     error::ContextError,
     token::any,
     Located, PResult, Parser,
@@ -32,7 +32,7 @@ pub fn parse_token(s: &mut Located<&str>) -> PResult<Token> {
         parse_identifier_identifier,
         parse_literal,
         any.with_span().map(token(TokenKind::Error)),
-        success("<eof>").with_span().map(token(TokenKind::Eof)),
+        empty.value("<eof>").with_span().map(token(TokenKind::Eof)),
     ))
     .parse_next(s)
 }

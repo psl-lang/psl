@@ -25,6 +25,7 @@ impl TryFrom<ast::Type> for Type {
                 "i32" => Ok(Type::I32),
                 "i64" => Ok(Type::I64),
                 "bool" => Ok(Type::Bool),
+                "tuple0" => Ok(Type::Tuple(Vec::new())),
                 _ => Err(format!("THere is no type named {:?}", &token.content)),
             },
         }
@@ -75,7 +76,7 @@ impl Type {
             Type::I64 => "i64".to_string(),
             Type::Integer => Type::I32.as_c_type(),
             Type::Bool => "bool".to_string(),
-            Type::Tuple(_) => todo!("tuple type is not supported now"),
+            Type::Tuple(_) => "tuple0".to_string(),
             Type::Function { .. } => todo!("function type is not supported now"),
             Type::Never { .. } => todo!("never type is not supported now"),
         }

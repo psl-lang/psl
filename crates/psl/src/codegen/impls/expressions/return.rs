@@ -13,7 +13,7 @@ impl CodegenNode for ReturnExpression {
         if self.value.infer_type(ctx).unwrap() == Type::Never {
             ctx.visit(self.value)
         } else {
-            format!("return {}", ctx.visit(self.value))
+            format!("return ({})", ctx.visit(self.value))
         }
     }
 }

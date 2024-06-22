@@ -3,8 +3,11 @@ resolver = "2"
 members = [
   "crates/c11-tree",
   "crates/psl",
-  "crates/psl-ast",
   "crates/psl-codegen-c11",
   "crates/psl-diagnostics",
-  "crates/psl-syntax",
 ]
+
+[workspace.dependencies]
+c11-tree = { path = "crates/c11-tree" }
+psl-codegen-c11 = { path = "crates/psl-codegen-c11" }
+psl-diagnostics = { path = "crates/psl-diagnostics" }

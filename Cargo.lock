@@ -4,12 +4,12 @@ version = 3
 
 [[package]]
 name = "ariadne"
-version = "0.3.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72fe02fc62033df9ba41cba57ee19acf5e742511a140c7dbc3a873e19a19a1bd"
+checksum = "44055e597c674aef7cb903b2b9f6e4cba1277ed0d2d61dae7cd52d7ffa81f8e2"
 dependencies = [
  "unicode-width",
- "yansi",
+ "yansi 1.0.1",
 ]
 
 [[package]]
@@ -35,7 +35,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af7cee1a6c8a5b9208b3cb1061f10c0cb689087b3d8ce85fb9d2dd7a29b6ba66"
 dependencies = [
  "diff",
- "yansi",
+ "yansi 0.5.1",
 ]
 
 [[package]]
@@ -49,19 +49,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "psl-ast"
-version = "0.1.0"
-
-[[package]]
 name = "psl-codegen-c11"
 version = "0.1.0"
 
 [[package]]
 name = "psl-diagnostics"
-version = "0.1.0"
-
-[[package]]
-name = "psl-syntax"
 version = "0.1.0"
 
 [[package]]
@@ -78,9 +70,9 @@ checksum = "e51733f11c9c4f72aa0c160008246859e340b00807569a0da0e7a1079b27ba85"
 
 [[package]]
 name = "winnow"
-version = "0.5.17"
+version = "0.6.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3b801d0e0a6726477cc207f60162da452f3a95adb368399bef20a946e06f65c"
+checksum = "59b5e5f6c299a3c7890b876a2a587f3115162487e704907d9b6cd29473052ba1"
 dependencies = [
  "memchr",
 ]
@@ -90,3 +82,9 @@ name = "yansi"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09041cd90cf85f7f8b2df60c646f853b7f535ce68f85244eb6731cf89fa498ec"
+
+[[package]]
+name = "yansi"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cfe53a6657fd280eaa890a3bc59152892ffa3e30101319d168b781ed6529b049"

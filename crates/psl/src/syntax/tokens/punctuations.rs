@@ -1,4 +1,4 @@
-use winnow::{combinator::alt, token::tag, Located, PResult, Parser};
+use winnow::{combinator::alt, Located, PResult, Parser};
 
 use crate::ast::{Token, TokenKind};
 
@@ -44,10 +44,5 @@ fn punct(
     punct: &str,
     kind: TokenKind,
 ) -> impl for<'a> Fn(&mut Located<&'a str>) -> PResult<Token> + '_ {
-    move |s| {
-        tag(punct)
-            .with_span()
-            .map(token(kind.clone()))
-            .parse_next(s)
-    }
+    move |s| punct.with_span().map(token(kind.clone())).parse_next(s)
 }

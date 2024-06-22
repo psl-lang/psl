@@ -34,9 +34,9 @@ impl CodegenNode for FunctionDeclaration {
 
         match self.body {
             ExpressionOrBlock::Expression(expr) => {
-                decl.push_str("return ");
+                decl.push_str("return (");
                 decl.push_str(&ctx.visit(expr));
-                decl.push_str(";\n");
+                decl.push_str(");\n");
             }
             ExpressionOrBlock::Block(block) => {
                 for statement in block.statements {
@@ -50,7 +50,7 @@ impl CodegenNode for FunctionDeclaration {
                         decl.push_str(&ctx.visit(last_expr));
                         decl.push_str(";\n");
                     }
-                    None => decl.push_str("return {};\n"),
+                    None => decl.push_str("return ({});\n"),
                 }
             }
         }

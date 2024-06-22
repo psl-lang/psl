@@ -1,5 +1,5 @@
 use winnow::{
-    combinator::{alt, cut_err, opt, preceded, separated1, separated_pair, terminated},
+    combinator::{alt, cut_err, opt, preceded, separated, separated_pair, terminated},
     Located, PResult, Parser,
 };
 
@@ -19,7 +19,8 @@ pub fn parse_function_declaration(s: &mut Located<&str>) -> PResult<FunctionDecl
             TokenKind::IdentifierIdentifier,
             TokenKind::PunctuationLeftParenthesis,
             opt(terminated(
-                separated1(
+                separated(
+                    1..,
                     separated_pair(
                         parse_type,
                         TokenKind::WhitespaceHorizontal,

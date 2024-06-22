@@ -1,5 +1,5 @@
 use winnow::{
-    combinator::{alt, delimited, opt, separated1},
+    combinator::{alt, delimited, opt, separated},
     Located, PResult, Parser,
 };
 
@@ -14,7 +14,8 @@ pub fn parse_postfix_operator(s: &mut Located<&str>) -> PResult<PostfixOperator>
 fn parse_invoke_operator(s: &mut Located<&str>) -> PResult<PostfixOperator> {
     delimited(
         TokenKind::PunctuationLeftParenthesis,
-        opt(separated1(
+        opt(separated(
+            1..,
             parse_expression,
             (
                 TokenKind::PunctuationComma,
@@ -30,7 +31,8 @@ fn parse_invoke_operator(s: &mut Located<&str>) -> PResult<PostfixOperator> {
 fn parse_index_operator(s: &mut Located<&str>) -> PResult<PostfixOperator> {
     delimited(
         TokenKind::PunctuationLeftSquareBracket,
-        opt(separated1(
+        opt(separated(
+            1..,
             parse_expression,
             (
                 TokenKind::PunctuationComma,
