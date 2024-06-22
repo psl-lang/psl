@@ -68,3 +68,32 @@ i32 __read_i32(c8 *read_buf)
 
     return is_negative ? ~result + 1 : result;
 }
+
+i64 __read_i64(c8 *read_buf)
+{
+    __skip_whitespace(read_buf);
+    c8 peek = __peek_c8(read_buf);
+
+    bool is_negative = peek == '-';
+    if (is_negative)
+    {
+        __consume_c8(read_buf);
+        peek = __peek_c8(read_buf);
+    }
+
+    if ('0' > peek || peek > '9')
+    {
+        __sys_panic("cannot read i64", 16);
+        return -1;
+    }
+
+    u64 result = 0;
+    while ('0' <= peek && peek <= '9')
+    {
+        __consume_c8(read_buf);
+        result = result * 10 + peek - '0';
+        peek = __peek_c8(read_buf);
+    }
+
+    return is_negative ? ~result + 1 : result;
+}

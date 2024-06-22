@@ -59,3 +59,28 @@ void __write_i32(c8 *write_buf, i32 i)
     }
     __sys_write(write_buf, buf + offset, 20 - offset);
 }
+
+void __write_i64(c8 *write_buf, i64 i)
+{
+    bool is_negative = i < 0;
+    if (is_negative)
+    {
+        i = -i;
+    }
+    c8 buf[20] = {
+        0,
+    };
+    usize offset = 20;
+    do
+    {
+        offset -= 1;
+        buf[offset] = '0' + (i % 10);
+        i /= 10;
+    } while (i > 0);
+    if (is_negative)
+    {
+        offset -= 1;
+        buf[offset] = '-';
+    }
+    __sys_write(write_buf, buf + offset, 20 - offset);
+}
