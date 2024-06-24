@@ -1,9 +1,9 @@
 use std::fmt::Display;
 
 use winnow::{
-    combinator::{alt, preceded, repeat},
+    combinator::{alt, cut_err, preceded, repeat},
     error::ContextError,
-    token::{one_of, take_while},
+    token::{one_of, take, take_while},
     Located, PResult, Parser,
 };
 
@@ -57,11 +57,13 @@ where
 pub fn parse_format_specifier(s: &mut Located<&str>) -> PResult<Token> {
     (
         '`',
-        repeat::<_, _, Vec<_>, _, _>(0.., parse_format_specifier_fragment),
-        '`',
+        cut_err((
+            repeat::<_, _, Vec<_>, _, _>(0.., parse_format_specifier_fragment),
+            '`',
+        )),
     )
         .with_span()
-        .map(|((_, seq, _), span)| {
+        .map(|((_, (seq, _)), span)| {
             let content = format!(
                 "`{}`",
                 seq.iter().map(|frag| frag.to_string()).collect::<String>()
@@ -80,6 +82,18 @@ pub fn parse_format_specifier_fragment(s: &mut Located<&str>) -> PResult<FormatS
         repeat(1.., alt((' ', "\\n".map(|_| '\n')))).map(FormatSpecifierFragment::Whitespace),
         ('{', TokenKind::IdentifierIdentifier, '}')
             .map(|(_, ident, _)| FormatSpecifierFragment::Variable(ident.content)),
+        repeat(
+            1..,
+            take(1usize).verify(|s| !matches!(s, " " | "\\" | "{" | "}" | "`")),
+        )
+        .fold(
+            || String::new(),
+            |mut acc, curr| {
+                acc.push_str(curr);
+                acc
+            },
+        )
+        .map(FormatSpecifierFragment::Text),
     ))
     .parse_next(s)
 }

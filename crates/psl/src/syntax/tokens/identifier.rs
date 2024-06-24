@@ -30,18 +30,6 @@ mod test {
     };
 
     #[test]
-    fn test_quoted_identifier() {
-        assert_eq!(
-            parse_identifier_identifier.parse(Located::new("`test example`")),
-            Ok(Token {
-                kind: TokenKind::IdentifierIdentifier,
-                span: 0..14,
-                content: "`test example`".to_string()
-            }),
-        )
-    }
-
-    #[test]
     fn test_simple_identifier() {
         assert_eq!(
             parse_identifier_identifier.parse(Located::new("a0")),

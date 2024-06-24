@@ -16,10 +16,13 @@ impl CodegenNode for WriteStatement {
                     let bytes = s.as_bytes();
                     output.push_str(&format!(
                         "__sys_write(write_buf, \"{}\", {});\n",
-                        bytes
-                            .iter()
-                            .map(|b| format!("\\x{:x}", b))
-                            .collect::<String>(),
+                        String::from_utf8(
+                            bytes
+                                .iter()
+                                .flat_map(|b| std::ascii::escape_default(*b))
+                                .collect::<Vec<_>>()
+                        )
+                        .unwrap(),
                         bytes.len()
                     ));
                 }
